@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Marooner's Map</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom colors based on the design */
+    .bg-brand-dark { background-color: #3B5B47; }
+    .bg-brand-light { background-color: #95D3A2; }
+    .text-brand-light { color: #95D3A2; }
+    .bg-brand-button { background-color: #527A5F; }
+    .bg-brand-button-hover { background-color: #639272; }
+    
+    /* Custom date picker icon styling */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.6;
+      transition: 0.2s;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+
+    /* Custom Select Arrow Styling */
+    select {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 1rem center;
+      background-repeat: no-repeat;
+      background-size: 1.5em 1.5em;
+    }
+  </style>
+</head>
+<body class="bg-white font-sans text-gray-800 h-screen w-screen flex overflow-hidden m-0 p-0">
+
+  <div class="hidden md:flex w-24 bg-brand-dark flex-col items-center py-6 justify-between rounded-r-3xl z-10 shadow-2xl h-full">
+    <div class="space-y-8 flex flex-col items-center w-full">
+      <div class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center shadow-md mb-4">
+        <svg class="w-8 h-8 text-[#3B5B47]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+      </div>
+      
+      <div class="w-10 h-10 bg-brand-light/30 rounded-full flex items-center justify-center text-brand-light cursor-pointer transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+      </div>
+      <div class="w-10 h-10 hover:bg-white/10 rounded-full flex items-center justify-center text-white/60 hover:text-white cursor-pointer transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+      </div>
+      <div class="w-10 h-10 hover:bg-white/10 rounded-full flex items-center justify-center text-white/60 hover:text-white cursor-pointer transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      </div>
+      <div class="w-10 h-10 hover:bg-white/10 rounded-full flex items-center justify-center text-white/60 hover:text-white cursor-pointer transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+      </div>
+    </div>
+    
+    <div class="w-10 h-10 bg-brand-light rounded-full flex items-center justify-center shadow-md cursor-pointer mt-auto"></div>
+  </div>
+
+  <div class="flex-1 flex items-center justify-center p-6 bg-white h-full w-full relative overflow-y-auto">
+    
+    <div class="bg-brand-dark w-full max-w-xl rounded-[2rem] p-8 md:p-12 text-white shadow-2xl my-auto">
+      
+      <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 tracking-wide">Marooner's Map</h1>
+
+      <form>
+        <div class="mb-5">
+          <label class="block text-sm font-bold mb-2 ml-1">Full Name</label>
+          <input type="text" placeholder="e.g. Juan Dela Cruz" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+          <div>
+            <label class="block text-sm font-bold mb-2 ml-1">Phone Number</label>
+            <input type="tel" placeholder="+63 9XX XXX XXXX" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-bold mb-2 ml-1">Birthday</label>
+            <input type="date" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium text-gray-500">
+          </div>
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-sm font-bold mb-2 ml-1">Location</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <select id="region" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer text-sm">
+              <option value="" disabled selected>Select Region</option>
+            </select>
+            
+            <select id="province" disabled class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
+              <option value="" disabled selected>Select Province</option>
+            </select>
+            
+            <select id="city" disabled class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
+              <option value="" disabled selected>Select City / Municipality</option>
+            </select>
+            
+            <select id="barangay" disabled class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
+              <option value="" disabled selected>Select Barangay</option>
+            </select>
+
+          </div>
+        </div>
+
+        <div class="mb-8 mt-6">
+          <label class="block text-sm font-bold mb-2 ml-1">Password</label>
+          <input type="password" placeholder="••••••••••••" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
+        </div>
+
+        <button type="button" class="w-full bg-brand-button hover:bg-brand-button-hover text-white font-bold rounded-full px-6 py-3.5 mb-6 transition shadow-sm">
+          Sign Up
+        </button>
+      </form>
+      
+      <div class="text-center space-y-3">
+        <p class="text-sm text-gray-300 font-medium">Already Have an Account? <a href="login.html" class="text-brand-light hover:underline ml-1">Sign In</a></p>
+        <p><a href="main.html" class="text-sm text-brand-light font-medium hover:underline">Or Continue Without Signing Up</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const apiBaseUrl = 'https://psgc.gitlab.io/api';
+      
+      const regionSelect = document.getElementById('region');
+      const provinceSelect = document.getElementById('province');
+      const citySelect = document.getElementById('city');
+      const barangaySelect = document.getElementById('barangay');
+
+      // Helper function to fetch data
+      async function fetchData(endpoint) {
+        try {
+          const response = await fetch(`${apiBaseUrl}${endpoint}`);
+          const data = await response.json();
+          // Sort alphabetically by name
+          return data.sort((a, b) => a.name.localeCompare(b.name));
+        } catch (error) {
+          console.error("Error fetching location data:", error);
+          return [];
+        }
+      }
+
+      // Helper function to populate select dropdowns
+      function populateSelect(selectElement, items, defaultText) {
+        selectElement.innerHTML = `<option value="" disabled selected>${defaultText}</option>`;
+        items.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.code;
+          option.textContent = item.name;
+          selectElement.appendChild(option);
+        });
+        selectElement.disabled = false;
+      }
+
+      // 1. Fetch and load Regions on page load
+      const regions = await fetchData('/regions/');
+      populateSelect(regionSelect, regions, 'Select Region');
+
+      // 2. When a Region is selected, load Provinces (or Cities if independent like NCR)
+      regionSelect.addEventListener('change', async (e) => {
+        const regionCode = e.target.value;
+        
+        // Reset lower dropdowns
+        provinceSelect.innerHTML = '<option value="" disabled selected>Select Province</option>';
+        provinceSelect.disabled = true;
+        citySelect.innerHTML = '<option value="" disabled selected>Select City / Municipality</option>';
+        citySelect.disabled = true;
+        barangaySelect.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
+        barangaySelect.disabled = true;
+
+        const provinces = await fetchData(`/regions/${regionCode}/provinces/`);
+        
+        // Some regions (like NCR) don't have provinces, they only have independent cities
+        if (provinces.length > 0) {
+          populateSelect(provinceSelect, provinces, 'Select Province');
+        } else {
+          // Skip province, load cities directly for NCR
+          const cities = await fetchData(`/regions/${regionCode}/cities-municipalities/`);
+          populateSelect(citySelect, cities, 'Select City / Municipality');
+        }
+      });
+
+      // 3. When a Province is selected, load Cities/Municipalities
+      provinceSelect.addEventListener('change', async (e) => {
+        const provinceCode = e.target.value;
+        
+        // Reset lower dropdowns
+        citySelect.innerHTML = '<option value="" disabled selected>Select City / Municipality</option>';
+        citySelect.disabled = true;
+        barangaySelect.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
+        barangaySelect.disabled = true;
+
+        const cities = await fetchData(`/provinces/${provinceCode}/cities-municipalities/`);
+        populateSelect(citySelect, cities, 'Select City / Municipality');
+      });
+
+      // 4. When a City/Municipality is selected, load Barangays
+      citySelect.addEventListener('change', async (e) => {
+        const cityCode = e.target.value;
+        
+        // Reset barangay dropdown
+        barangaySelect.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
+        barangaySelect.disabled = true;
+
+        const barangays = await fetchData(`/cities-municipalities/${cityCode}/barangays/`);
+        populateSelect(barangaySelect, barangays, 'Select Barangay');
+      });
+    });
+  </script>
+
+</body>
+</html>
