@@ -110,7 +110,7 @@
           <h3 class="text-xl font-bold mb-1">My Default Address</h3>
           <p class="text-sm text-brand-light mb-6 font-medium">This helps rescuers locate you faster if you submit an emergency SOS via SMS.</p>
           
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-semibold mb-1.5 text-gray-200 ml-1">Region</label>
               <select id="regionSelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer">
@@ -132,6 +132,17 @@
               <select id="citySelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer">
                 <option value="" disabled>Select City</option>
                 <option value="Miagao" selected>Miagao</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-1.5 text-gray-200 ml-1">Barangay</label>
+              <select id="barangaySelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer">
+                <option value="" disabled>Select Barangay</option>
+                <option value="Mat-y" selected>Mat-y</option>
+                <option value="Mambatad">Mambatad</option>
+                <option value="Poblacion">Poblacion</option>
+                <option value="Baybay">Baybay</option>
               </select>
             </div>
           </div>
@@ -244,14 +255,23 @@
       }
     };
 
+    // Mock specific barangays for UI realism without bloating the file. 
+    // Any unlisted city will default to generic barangay names.
+    const mockBarangays = {
+      "Miagao": ["Mat-y", "Mambatad", "Poblacion", "Baybay", "Sapa", "Damilisan"],
+      "Iloilo City": ["Jaro", "Mandurriao", "Molo", "La Paz", "Arevalo", "City Proper"],
+      "Cebu City": ["Lahug", "Mabolo", "Guadalupe", "Talamban", "Capitol Site"]
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
       const regionSelect = document.getElementById('regionSelect');
       const provinceSelect = document.getElementById('provinceSelect');
       const citySelect = document.getElementById('citySelect');
+      const barangaySelect = document.getElementById('barangaySelect');
 
       // Populate Regions (Keeping existing selected options intact if they exist)
       Object.keys(phLocations).forEach(region => {
-        if(region !== "Region VI (Western Visayas)") { // Skip pre-selected for this demo
+        if(region !== "Region VI (Western Visayas)") { 
           let opt = document.createElement('option');
           opt.value = region;
           opt.textContent = region;
@@ -263,7 +283,10 @@
       regionSelect.addEventListener('change', function() {
         provinceSelect.innerHTML = '<option value="" disabled selected>Select Province</option>';
         citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+        barangaySelect.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
+        
         citySelect.disabled = true;
+        barangaySelect.disabled = true;
 
         const selectedRegion = this.value;
         if(selectedRegion) {
@@ -281,6 +304,9 @@
       // Handle Province Change
       provinceSelect.addEventListener('change', function() {
         citySelect.innerHTML = '<option value="" disabled selected>Select City</option>';
+        barangaySelect.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
+        
+        barangaySelect.disabled = true;
         
         const selectedRegion = regionSelect.value;
         const selectedProvince = this.value;
@@ -294,6 +320,26 @@
             citySelect.appendChild(opt);
           });
           citySelect.disabled = false;
+        }
+      });
+
+      // Handle City Change
+      citySelect.addEventListener('change', function() {
+        barangaySelect.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
+        
+        const selectedCity = this.value;
+        
+        if(selectedCity) {
+          // Look up real mock data, or generate generic "Barangay 1, 2, 3..." if none exists.
+          const barangays = mockBarangays[selectedCity] || ["Barangay 1", "Barangay 2", "Barangay 3", "Barangay 4", "Poblacion"];
+          
+          barangays.forEach(brgy => {
+            let opt = document.createElement('option');
+            opt.value = brgy;
+            opt.textContent = brgy;
+            barangaySelect.appendChild(opt);
+          });
+          barangaySelect.disabled = false;
         }
       });
     });
