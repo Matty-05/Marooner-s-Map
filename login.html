@@ -45,22 +45,22 @@
       
       <h1 class="text-3xl md:text-4xl font-bold text-center mb-10 tracking-wide">Marooner's Map</h1>
 
-      <form>
+      <form action="login.php" method="POST">
         <div class="mb-5">
           <label class="block text-sm font-bold mb-2 ml-1">Phone Number</label>
-          <input type="tel" placeholder="+63 9XX XXX XXXX" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
+          <input type="tel" name="phone" placeholder="+63 9XX XXX XXXX" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
         </div>
         
         <div class="mb-2">
           <label class="block text-sm font-bold mb-2 ml-1">Password</label>
-          <input type="password" placeholder="Enter your Password" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
+          <input type="password" name="password" placeholder="Enter your Password" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
         </div>
 
         <div class="text-right mb-8">
           <a href="#" class="text-sm text-gray-300 hover:text-white transition">Forgot Password?</a>
         </div>
 
-        <button type="button" class="w-full bg-brand-button hover:bg-brand-button-hover text-white font-bold rounded-full px-6 py-3.5 mb-4 transition shadow-sm">
+        <button type="submit" class="w-full bg-brand-button hover:bg-brand-button-hover text-white font-bold rounded-full px-6 py-3.5 mb-4 transition shadow-sm">
           Sign In
         </button>
         
