@@ -127,36 +127,16 @@
         <div id="map" class="absolute inset-0 w-full h-full z-0"></div>
         
         <script>
-            // Set back to Miagao coordinates based on your previous question
-            var map = L.map('map').setView([0,0], 1);
+            var map = L.map('map').setView([12.8797, 121.7740], 6);
 
             L.tileLayer('https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=pxJ2FnvFl8J48s3zwqMi', {
                 attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
             }).addTo(map);
-            
-            function onLocationFound(e) {
-                var radius = e.accuracy;
-
-                L.marker(e.latlng).addTo(map)
-                    .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-                L.circle(e.latlng, radius).addTo(map);
-            }
-
-            map.on('locationfound', onLocationFound);
-
-            function onLocationError(e) {
-                alert(e.message);
-            }
-
-            map.on('locationerror', onLocationError);
-
-            map.locate({setView: true, maxZoom: 16});
         </script>
 
-        <button onclick="document.getElementById('reportModal').classList.remove('hidden')" class="absolute bottom-6 right-6 bg-[#2d4a3e] hover:bg-[#3B5B47] text-[#95D3A2] px-6 py-3 rounded-full shadow-2xl font-bold flex items-center gap-2 transition transform hover:scale-105 border border-[#95D3A2]/30 z-[1000]">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Add Report
+        <button id="startReportBtn" class="absolute bottom-6 right-6 bg-[#2d4a3e] hover:bg-[#3B5B47] text-[#95D3A2] px-6 py-3 rounded-full shadow-2xl font-bold flex items-center gap-2 transition transform hover:scale-105 border border-[#95D3A2]/30 z-[1000]">
+            <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span id="reportBtnText" class="pointer-events-none">Add Report</span>
         </button>
     </div>
 
@@ -215,20 +195,20 @@
         <h2 class="text-2xl font-bold text-gray-800">New Map Report</h2>
       </div>
 
-      <form>
+      <form id="reportForm">
         <div class="mb-4">
           <label class="block text-sm font-bold text-gray-700 mb-2">Report Title</label>
-          <input type="text" placeholder="e.g. Fallen Electric Post" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:border-[#3B5B47] focus:ring-1 focus:ring-[#3B5B47] transition">
+          <input id="reportTitle" type="text" placeholder="e.g. Fallen Electric Post" class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:border-[#3B5B47] focus:ring-1 focus:ring-[#3B5B47] transition">
         </div>
 
         <div class="mb-6">
           <label class="block text-sm font-bold text-gray-700 mb-2">Description</label>
-          <textarea rows="4" placeholder="Describe the hazard or emergency..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:border-[#3B5B47] focus:ring-1 focus:ring-[#3B5B47] transition resize-none"></textarea>
+          <textarea id="reportDesc" rows="4" placeholder="Describe the hazard or emergency..." class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:border-[#3B5B47] focus:ring-1 focus:ring-[#3B5B47] transition resize-none"></textarea>
         </div>
 
-        <button type="button" onclick="document.getElementById('reportModal').classList.add('hidden')" class="w-full bg-[#3B5B47] hover:bg-[#2d4a3e] text-[#95D3A2] font-bold rounded-xl px-4 py-3.5 transition shadow-lg flex justify-center items-center gap-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-          Pin to Map
+        <button id="pinToMapBtn" type="button" class="w-full bg-[#3B5B47] hover:bg-[#2d4a3e] text-[#95D3A2] font-bold rounded-xl px-4 py-3.5 transition shadow-lg flex justify-center items-center gap-2">
+            <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            Pin to Map
         </button>
       </form>
     </div>
@@ -427,6 +407,102 @@
               }
           });
       }
+
+      // --- 3. INTERACTIVE PIN TO MAP LOGIC ---
+      const startReportBtn = document.getElementById('startReportBtn');
+      const reportBtnText = document.getElementById('reportBtnText');
+      const pinToMapBtn = document.getElementById('pinToMapBtn');
+      const reportTitle = document.getElementById('reportTitle');
+      const reportDesc = document.getElementById('reportDesc');
+      const reportModal = document.getElementById('reportModal');
+
+      // Variables to track our map state
+      let isPickingLocation = false;
+      let clickedCoordinates = null; 
+
+      // 1. User clicks "Add Report" to start targeting mode
+      if (startReportBtn) {
+              startReportBtn.addEventListener('click', function(e) {
+              e.stopPropagation(); // <-- ADD THIS LINE
+              // Toggle picking mode
+              isPickingLocation = !isPickingLocation; 
+
+              if (isPickingLocation) {
+                  // Visual feedback: Change cursor and button text
+                  document.getElementById('map').style.cursor = 'crosshair';
+                  startReportBtn.classList.replace('bg-[#2d4a3e]', 'bg-red-600'); 
+                  reportBtnText.innerText = 'Cancel Pinning';
+              } else {
+                  // Cancel picking mode
+                  document.getElementById('map').style.cursor = ''; // Reset cursor
+                  startReportBtn.classList.replace('bg-red-600', 'bg-[#2d4a3e]');
+                  reportBtnText.innerText = 'Add Report';
+              }
+          });
+      }
+
+      // 2. User clicks somewhere on the Map
+      map.on('click', function(e) {
+          if (isPickingLocation) {
+              // Save the exact coordinates of where they clicked
+              clickedCoordinates = e.latlng;
+
+              // Open the modal
+              reportModal.classList.remove('hidden');
+
+              // Reset map state back to normal immediately
+              isPickingLocation = false;
+              document.getElementById('map').style.cursor = '';
+              startReportBtn.classList.replace('bg-red-600', 'bg-[#2d4a3e]');
+              reportBtnText.innerText = 'Add Report';
+          }
+      });
+
+      // 3. User submits the form inside the Modal
+      if (pinToMapBtn) {
+          pinToMapBtn.addEventListener('click', function() {
+              const titleValue = reportTitle.value.trim();
+              const descValue = reportDesc.value.trim();
+
+              // Validate form
+              if (!titleValue) {
+                  alert("Please enter a Report Title.");
+                  return;
+              }
+
+              // Failsafe: Make sure we actually have coordinates saved
+              if (!clickedCoordinates) {
+                  alert("Location error. Please try again.");
+                  return;
+              }
+
+              // Create the marker EXACTLY where they clicked
+              const newMarker = L.marker([clickedCoordinates.lat, clickedCoordinates.lng]).addTo(map);
+
+              // Build popup
+              const popupContent = `
+                  <div class="font-sans min-w-[150px]">
+                      <h3 class="font-bold text-lg text-[#3B5B47] leading-tight mb-1">${titleValue}</h3>
+                      <p class="text-sm text-gray-600 m-0">${descValue || 'No description provided.'}</p>
+                      <div class="text-xs text-gray-400 mt-2 pt-2 border-t border-gray-100">
+                          Just reported
+                      </div>
+                  </div>
+              `;
+
+              newMarker.bindPopup(popupContent).openPopup();
+
+              // Optional: Pan slightly so the new popup is in the center of the screen
+              map.panTo([clickedCoordinates.lat, clickedCoordinates.lng]);
+
+              // Close the modal and wipe the form for next time
+              reportModal.classList.add('hidden');
+              reportTitle.value = '';
+              reportDesc.value = '';
+              clickedCoordinates = null; // Clear saved coordinates
+          });
+      }
+      
     });
   </script>
 
