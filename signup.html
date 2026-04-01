@@ -63,21 +63,27 @@
       
       <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 tracking-wide">Marooner's Map</h1>
 
-      <form>
+      <form action="signup.php" method="POST">
+
+        <input type="hidden" name="region_text" id="region_text">
+        <input type="hidden" name="province_text" id="province_text">
+        <input type="hidden" name="city_text" id="city_text">
+        <input type="hidden" name="barangay_text" id="barangay_text">
+
         <div class="mb-5">
           <label class="block text-sm font-bold mb-2 ml-1">Full Name</label>
-          <input type="text" placeholder="e.g. Juan Dela Cruz" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
+          <input name="fullname" type="text" placeholder="e.g. Juan Dela Cruz" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
           <div>
             <label class="block text-sm font-bold mb-2 ml-1">Phone Number</label>
-            <input type="tel" placeholder="+63 9XX XXX XXXX" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
+            <input name="phone" type="tel" placeholder="+63 9XX XXX XXXX" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
           </div>
           
           <div>
             <label class="block text-sm font-bold mb-2 ml-1">Birthday</label>
-            <input type="date" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium text-gray-500">
+            <input name="birthday" type="date" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium text-gray-500">
           </div>
         </div>
 
@@ -85,19 +91,19 @@
           <label class="block text-sm font-bold mb-2 ml-1">Location</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
-            <select id="region" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer text-sm">
+            <select id="region" name="region" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer text-sm">
               <option value="" disabled selected>Select Region</option>
             </select>
             
-            <select id="province" disabled class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
+            <select id="province" name="province" disabled class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
               <option value="" disabled selected>Select Province</option>
             </select>
             
-            <select id="city" disabled class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
+            <select id="city" name="city" disabled class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
               <option value="" disabled selected>Select City / Municipality</option>
             </select>
             
-            <select id="barangay" disabled class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
+            <select id="barangay" name="barangay"  class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm">
               <option value="" disabled selected>Select Barangay</option>
             </select>
 
@@ -106,10 +112,10 @@
 
         <div class="mb-8 mt-6">
           <label class="block text-sm font-bold mb-2 ml-1">Password</label>
-          <input type="password" placeholder="••••••••••••" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
+          <input type="password" name="password" placeholder="••••••••••••" class="w-full bg-white text-gray-900 rounded-full px-6 py-3.5 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition placeholder-gray-400 font-medium">
         </div>
 
-        <button type="button" class="w-full bg-brand-button hover:bg-brand-button-hover text-white font-bold rounded-full px-6 py-3.5 mb-6 transition shadow-sm">
+        <button type="submit" class="w-full bg-brand-button hover:bg-brand-button-hover text-white font-bold rounded-full px-6 py-3.5 mb-6 transition shadow-sm">
           Sign Up
         </button>
       </form>
@@ -131,6 +137,12 @@
       const citySelect = document.getElementById('city');
       const barangaySelect = document.getElementById('barangay');
 
+      //hidden pockets
+      const regionText = document.getElementById('region_text');
+      const provinceText = document.getElementById('province_text');
+      const cityText = document.getElementById('city_text');
+      const barangayText = document.getElementById('barangay_text');
+
       // Helper function to fetch data
       async function fetchData(endpoint) {
         try {
@@ -150,6 +162,7 @@
         items.forEach(item => {
           const option = document.createElement('option');
           option.value = item.code;
+          option.setAttribute('data-name', item.name);
           option.textContent = item.name;
           selectElement.appendChild(option);
         });
@@ -162,6 +175,7 @@
 
       // 2. When a Region is selected, load Provinces (or Cities if independent like NCR)
       regionSelect.addEventListener('change', async (e) => {
+        regionText.value = e.target.options[e.target.selectedIndex].getAttribute('data-name');
         const regionCode = e.target.value;
         
         // Reset lower dropdowns
@@ -186,6 +200,7 @@
 
       // 3. When a Province is selected, load Cities/Municipalities
       provinceSelect.addEventListener('change', async (e) => {
+        provinceText.value = e.target.options[e.target.selectedIndex].getAttribute('data-name');
         const provinceCode = e.target.value;
         
         // Reset lower dropdowns
@@ -200,6 +215,7 @@
 
       // 4. When a City/Municipality is selected, load Barangays
       citySelect.addEventListener('change', async (e) => {
+        cityText.value = e.target.options[e.target.selectedIndex].getAttribute('data-name');
         const cityCode = e.target.value;
         
         // Reset barangay dropdown
@@ -208,6 +224,12 @@
 
         const barangays = await fetchData(`/cities-municipalities/${cityCode}/barangays/`);
         populateSelect(barangaySelect, barangays, 'Select Barangay');
+      });
+
+      // 5. Barangay Change
+      barangaySelect.addEventListener('change', (e) => {
+        // SAVE NAME TO HIDDEN INPUT
+        barangayText.value = e.target.options[e.target.selectedIndex].getAttribute('data-name');
       });
     });
   </script>
