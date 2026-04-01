@@ -573,5 +573,23 @@
     }
   </script>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedName = localStorage.getItem("userLoggedIn") || "Guest User";
+      
+      // Update the "Hello, Name!" text
+      const welcomeHeader = document.querySelector('h1');
+      if (welcomeHeader) {
+        welcomeHeader.innerHTML = `Hello, ${savedName}! <span class="ml-2 text-2xl">👋</span>`;
+      }
+
+      // Update the Profile Circle (JD -> initials)
+      const profileCircle = document.querySelector('a[href="profile.html"]');
+      if (profileCircle && savedName !== "Guest User") {
+        const initials = savedName.split(' ').map(n => n[0]).join('').toUpperCase();
+        profileCircle.textContent = initials.substring(0, 2);
+      }
+    });
+  </script>
 </body>
 </html>

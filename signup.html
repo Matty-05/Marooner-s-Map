@@ -63,7 +63,7 @@
       
       <h1 class="text-3xl md:text-4xl font-bold text-center mb-8 tracking-wide">Marooner's Map</h1>
 
-      <form action="signup.php" method="POST">
+      <form id="signupForm">
 
         <input type="hidden" name="region_text" id="region_text">
         <input type="hidden" name="province_text" id="province_text">
@@ -232,6 +232,58 @@
         barangayText.value = e.target.options[e.target.selectedIndex].getAttribute('data-name');
       });
     });
+  </script>
+
+  <script type="module">
+    // Import the functions
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, initializeFirestore} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCMWPvDEKEGWYiyL8ozobe778o1ZbudHY",
+      authDomain: "marooner-s-map-9bd81.firebaseapp.com",
+      projectId: "marooner-s-map-9bd81",
+      storageBucket: "marooner-s-map-9bd81.firebasestorage.app",
+      messagingSenderId: "630717954342",
+      appId: "1:630717954342:web:d83fcde58c2a7efd8129e7",
+      measurementId: "G-DWJKH47FPM"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const signUpForm = document.getElementById('signupForm');
+    signUpForm.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Stop the page from refreshing
+
+    // Gather all the data from your inputs
+    const userData = {
+      fullname: document.querySelector('[name="fullname"]').value,
+      phone: document.querySelector('[name="phone"]').value,
+      birthday: document.querySelector('[name="birthday"]').value,
+      region: document.getElementById('region_text').value,
+      province: document.getElementById('province_text').value,
+      city: document.getElementById('city_text').value,
+      barangay: document.getElementById('barangay_text').value,
+      password: document.querySelector('[name="password"]').value, // In a real app, we'd hash this!
+      createdAt: new Date() // Good for sorting users later
+    };
+
+    try {
+      const docRef = await addDoc(collection(db, "users"), userData);
+      
+      alert("Registration Successful!");
+      console.log("Document written with ID: ", docRef.id);
+      
+      // Redirect to login page
+      window.location.href = 'login.html';
+      
+    } catch (error) {
+      console.error("Error adding user: ", error);
+      alert("Registration failed. Check the console for details.");
+    }
+  });
   </script>
 
 </body>
