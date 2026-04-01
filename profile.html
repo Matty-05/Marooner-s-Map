@@ -43,9 +43,6 @@
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
       </a>
       
-      <a href="profile.html" class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-brand-light cursor-pointer transition shadow-inner">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-      </a>
     </div>
     
     <a href="profile.html" class="w-10 h-10 bg-brand-light rounded-full flex items-center justify-center shadow-md cursor-pointer mt-auto text-brand-dark font-bold text-sm ring-2 ring-white hover:scale-105 transition">
@@ -114,39 +111,31 @@
             <div>
               <label class="block text-sm font-semibold mb-1.5 text-gray-200 ml-1">Region</label>
               <select id="regionSelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer">
-                <option value="" disabled>Select Region</option>
-                <option value="Region VI (Western Visayas)" selected>Region VI (Western Visayas)</option>
+                <option value="" disabled selected>Select Region</option>
               </select>
             </div>
             
             <div>
               <label class="block text-sm font-semibold mb-1.5 text-gray-200 ml-1">Province</label>
-              <select id="provinceSelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer">
-                <option value="" disabled>Select Province</option>
-                <option value="Iloilo" selected>Iloilo</option>
+              <select id="provinceSelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer" disabled>
+                <option value="" disabled selected>Select Province</option>
               </select>
             </div>
             
             <div>
               <label class="block text-sm font-semibold mb-1.5 text-gray-200 ml-1">City/Municipality</label>
-              <select id="citySelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer">
-                <option value="" disabled>Select City</option>
-                <option value="Miagao" selected>Miagao</option>
+              <select id="citySelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer" disabled>
+                <option value="" disabled selected>Select City</option>
               </select>
             </div>
 
             <div>
               <label class="block text-sm font-semibold mb-1.5 text-gray-200 ml-1">Barangay</label>
-              <select id="barangaySelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer">
-                <option value="" disabled>Select Barangay</option>
-                <option value="Mat-y" selected>Mat-y</option>
-                <option value="Mambatad">Mambatad</option>
-                <option value="Poblacion">Poblacion</option>
-                <option value="Baybay">Baybay</option>
+              <select id="barangaySelect" class="w-full bg-white border border-gray-300 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#95D3A2] transition font-medium appearance-none cursor-pointer" disabled>
+                <option value="" disabled selected>Select Barangay</option>
               </select>
             </div>
           </div>
-        </div>
 
         <div class="bg-brand-dark rounded-[1.5rem] p-6 md:p-8 text-white shadow-lg">
           <h3 class="text-xl font-bold mb-4">Security</h3>
@@ -269,15 +258,59 @@
       const citySelect = document.getElementById('citySelect');
       const barangaySelect = document.getElementById('barangaySelect');
 
-      // Populate Regions (Keeping existing selected options intact if they exist)
+      // 1. Populate All Regions
       Object.keys(phLocations).forEach(region => {
-        if(region !== "Region VI (Western Visayas)") { 
-          let opt = document.createElement('option');
-          opt.value = region;
-          opt.textContent = region;
-          regionSelect.appendChild(opt);
-        }
+        let opt = document.createElement('option');
+        opt.value = region;
+        opt.textContent = region;
+        regionSelect.appendChild(opt);
       });
+
+      // 2. Programmatically Set the Default Saved Address
+      const defaultRegion = "Region VI (Western Visayas)";
+      const defaultProvince = "Iloilo";
+      const defaultCity = "Miagao";
+      const defaultBarangay = "Mat-y";
+
+      // Set Region
+      regionSelect.value = defaultRegion;
+
+      // Populate & Set Province
+      if (phLocations[defaultRegion]) {
+        Object.keys(phLocations[defaultRegion]).forEach(prov => {
+          let opt = document.createElement('option');
+          opt.value = prov;
+          opt.textContent = prov;
+          provinceSelect.appendChild(opt);
+        });
+        provinceSelect.value = defaultProvince;
+        provinceSelect.disabled = false;
+      }
+
+      // Populate & Set City
+      if (phLocations[defaultRegion][defaultProvince]) {
+        phLocations[defaultRegion][defaultProvince].forEach(city => {
+          let opt = document.createElement('option');
+          opt.value = city;
+          opt.textContent = city;
+          citySelect.appendChild(opt);
+        });
+        citySelect.value = defaultCity;
+        citySelect.disabled = false;
+      }
+
+      // Populate & Set Barangay
+      const barangays = mockBarangays[defaultCity] || ["Barangay 1", "Barangay 2", "Barangay 3", "Barangay 4", "Poblacion"];
+      barangays.forEach(brgy => {
+        let opt = document.createElement('option');
+        opt.value = brgy;
+        opt.textContent = brgy;
+        barangaySelect.appendChild(opt);
+      });
+      barangaySelect.value = defaultBarangay;
+      barangaySelect.disabled = false;
+
+      // ... [Keep the existing "Handle Region Change", "Handle Province Change", etc. event listeners here exactly as they were] ...
 
       // Handle Region Change
       regionSelect.addEventListener('change', function() {
