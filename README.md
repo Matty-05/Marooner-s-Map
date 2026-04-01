@@ -21,11 +21,3 @@ To view your project, open your browser and go to:
 
 ### 2. Running the website
 Type: `http://localhost/your-folder-name/Marooner-s-Map/signup.html`
-
-
-
-
-
----
-
-**Happy Coding!** 💻
