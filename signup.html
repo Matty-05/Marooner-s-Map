@@ -266,8 +266,8 @@
       province: document.getElementById('province_text').value,
       city: document.getElementById('city_text').value,
       barangay: document.getElementById('barangay_text').value,
-      password: document.querySelector('[name="password"]').value, // In a real app, we'd hash this!
-      createdAt: new Date() // Good for sorting users later
+      password: document.querySelector('[name="password"]').value, 
+      createdAt: new Date() 
     };
 
     try {
@@ -277,7 +277,7 @@
       console.log("Document written with ID: ", docRef.id);
       
       // Redirect to login page
-      window.location.href = 'index.html';
+      window.location.href = './index.html';
       
     } catch (error) {
       console.error("Error adding user: ", error);
