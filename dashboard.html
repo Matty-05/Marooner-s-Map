@@ -33,11 +33,11 @@
 
   <div class="hidden md:flex w-24 bg-brand-dark flex-col items-center py-6 justify-between rounded-r-3xl z-20 shadow-2xl h-full flex-shrink-0">
     <div class="space-y-8 flex flex-col items-center w-full">
-      <a href="main.html" class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center shadow-lg mb-2 transition transform hover:scale-105">
+      <a href="index.html" class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center shadow-lg mb-2 transition transform hover:scale-105">
         <svg class="w-8 h-8 text-[#3B5B47]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
       </a>
       
-      <a href="main.html" class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-brand-light cursor-pointer transition shadow-inner">
+      <a href="index.html" class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-brand-light cursor-pointer transition shadow-inner">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
       </a>
       
@@ -253,7 +253,33 @@
     <img id="lightboxImg" src="" alt="" class="max-w-[90vw] max-h-[85vh] rounded-xl shadow-2xl object-contain">
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      query, 
+      where, 
+      getDocs,
+      addDoc,           
+      onSnapshot,  
+      orderBy,          
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCMWPvDEKEGWYiyL8ozobe778o1ZbudHY",
+      authDomain: "marooner-s-map-9bd81.firebaseapp.com",
+      projectId: "marooner-s-map-9bd81",
+      storageBucket: "marooner-s-map-9bd81.firebasestorage.app",
+      messagingSenderId: "630717954342",
+      appId: "1:630717954342:web:d83fcde58c2a7efd8129e7",
+      measurementId: "G-DWJKH47FPM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     // --- 0. CUSTOM COLORED MARKERS ---
     // Helper function to create icons easily
     const createIcon = (color) => new L.Icon({
@@ -271,7 +297,7 @@
 
     // ─── Location filter dropdowns ────────────────────────────
     const phLocations = {
-      "NCR (National Capital Region)": {
+      "NCR": {
         "Metro Manila": ["Caloocan", "Las Piñas", "Makati", "Malabon", "Mandaluyong", "Manila", "Marikina", "Muntinlupa", "Navotas", "Parañaque", "Pasay", "Pasig", "Pateros", "Quezon City", "San Juan", "Taguig", "Valenzuela"]
       },
       "CAR (Cordillera Administrative Region)": {
@@ -353,10 +379,11 @@
       }
     };
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {      
       const regionSelect = document.getElementById('regionSelect');
       const provinceSelect = document.getElementById('provinceSelect');
       const citySelect = document.getElementById('citySelect');
+      const savedName = localStorage.getItem("userLoggedIn") || "Guest User";
 
       // Populate Regions
       Object.keys(phLocations).forEach(region => {
@@ -511,25 +538,13 @@
       });
 
       // User clicks "Add Report" to start targeting mode
-      if (startReportBtn) {
-              startReportBtn.addEventListener('click', function(e) {
-              e.stopPropagation(); 
-              // Toggle picking mode
-              isPickingLocation = !isPickingLocation; 
-
-              if (isPickingLocation) {
-                  // Visual feedback: Change cursor and button text
-                  document.getElementById('map').style.cursor = 'crosshair';
-                  startReportBtn.classList.replace('bg-[#2d4a3e]', 'bg-red-600'); 
-                  reportBtnText.innerText = 'Cancel Pinning';
-              } else {
-                  // Cancel picking mode
-                  document.getElementById('map').style.cursor = ''; // Reset cursor
-                  startReportBtn.classList.replace('bg-red-600', 'bg-[#2d4a3e]');
-                  reportBtnText.innerText = 'Add Report';
-              }
-          });
-      }
+      startReportBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            isPickingLocation = !isPickingLocation;
+            document.getElementById('map').style.cursor = isPickingLocation ? 'crosshair' : '';
+            startReportBtn.classList.toggle('bg-red-600', isPickingLocation);
+            reportBtnText.innerText = isPickingLocation ? 'Cancel Pinning' : 'Add Report';
+        });
 
       // User clicks somewhere on the Map
       map.on('click', function(e) {
@@ -550,79 +565,72 @@
       });
 
       // User submits the form inside the Modal
-      if (pinToMapBtn) {
-          pinToMapBtn.addEventListener('click', function() {
-              const titleValue = reportTitle.value.trim();
-              const descValue = reportDesc.value.trim();
+      pinToMapBtn.addEventListener('click', async () => {
+            const titleValue = reportTitle.value.trim();
+            if (!selectedIncidentType || !titleValue || !clickedCoordinates) {
+                alert("Please select a type, title, and location on the map.");
+                return;
+            }
 
-              // Validate form
-              if (!selectedIncidentType) {
-                  alert("Please select an Incident Type (SOS, Hazard, or Info).");
-                  return;
-              }
+            try {
+                // Add document to Firestore
+                await addDoc(collection(db, "reports"), {
+                    type: selectedIncidentType,
+                    title: titleValue,
+                    description: reportDesc.value.trim(),
+                    lat: clickedCoordinates.lat,
+                    lng: clickedCoordinates.lng,
+                    reportedBy: savedName,
+                    timestamp: serverTimestamp()
+                });
+                closeModal();
+            } catch (error) {
+                alert("Error saving report: " + error.message);
+            }
+        });
 
-              if (!titleValue) {
-                  alert("Please enter a Report Title.");
-                  return;
-              }
+        // --- 5. LOAD FROM DATABASE (REAL-TIME) ---
+        // This query gets reports and orders them by time
+        const q = query(collection(db, "reports"), orderBy("timestamp", "asc"));
+        
+        onSnapshot(q, (snapshot) => {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    const data = change.doc.data();
+                    
+                    // Choose icon based on type
+                    let iconToUse = blueIcon;
+                    if (data.type === 'SOS Request') iconToUse = redIcon;
+                    else if (data.type === 'Hazard') iconToUse = yellowIcon;
 
-              // Failsafe: Make sure we actually have coordinates saved
-              if (!clickedCoordinates) {
-                  alert("Location error. Please try again.");
-                  return;
-              }
-
-              // Create the marker EXACTLY where they clicked, using the DYNAMIC color icon!
-              const newMarker = L.marker([clickedCoordinates.lat, clickedCoordinates.lng], {icon: selectedIcon}).addTo(map);
-
-              // Build popup
-              const popupContent = `
-                  <div class="font-sans min-w-[150px]">
-                      <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">${selectedIncidentType}</div>
-                      <h3 class="font-bold text-lg text-[#3B5B47] leading-tight mb-1">${titleValue}</h3>
-                      <p class="text-sm text-gray-600 m-0">${descValue || 'No description provided.'}</p>
-                      <div class="text-xs text-gray-400 mt-2 pt-2 border-t border-gray-100">
-                          Just reported
-                      </div>
-                  </div>
-              `;
-
-              newMarker.bindPopup(popupContent).openPopup();
-
-              // Optional: Pan slightly so the new popup is in the center of the screen
-              map.panTo([clickedCoordinates.lat, clickedCoordinates.lng]);
-
-              // Close the modal and wipe the form for next time
-              closeModal();
-          });
-      }
+                    // Add the marker to the map
+                    L.marker([data.lat, data.lng], {icon: iconToUse})
+                        .addTo(map)
+                        .bindPopup(`
+                            <div class="p-1">
+                                <b class="text-brand-dark">${data.type}: ${data.title}</b><br>
+                                <p class="text-sm text-gray-600">${data.description || ''}</p>
+                                <hr class="my-1">
+                                <i class="text-xs text-gray-400 font-sans">By ${data.reportedBy}</i>
+                            </div>
+                        `);
+                }
+            });
+        });
 
       // Modal Closing Logic
       function closeModal() {
-          // Hide modal and show the Add Report button again
-          reportModal.classList.add('hidden');
-          startReportBtn.classList.remove('hidden');
+            reportModal.classList.add('hidden');
+            startReportBtn.classList.remove('hidden');
+            reportTitle.value = '';
+            reportDesc.value = '';
+            selectedIncidentType = null;
+            typeBtns.forEach(b => b.classList.add('border-gray-200', 'text-gray-600'));
+        }
 
-          // Optional: You could reset the form here so it's fresh for the next report
-          reportTitle.value = '';
-          reportDesc.value = '';
-          selectedIncidentType = null;
-          selectedIcon = blueIcon;
-          typeBtns.forEach(b => {
-              b.classList.remove('border-red-400', 'bg-red-50', 'text-red-600', 'border-yellow-400', 'bg-yellow-50', 'text-yellow-600', 'border-blue-400', 'bg-blue-50', 'text-blue-600');
-              b.classList.add('border-gray-200', 'text-gray-600');
-          });
-      }
-
-      if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
-      if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
-
-    }); // End DOMContentLoaded
-
-    function closeLightbox() {
-        document.getElementById('lightbox').classList.add('hidden');
-    }
-  </script>
+        window.closeModal = closeModal; // Make accessible to HTML buttons
+    });
+</script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
