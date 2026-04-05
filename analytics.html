@@ -116,7 +116,7 @@
           <h3 class="text-sm font-semibold opacity-90 w-3/4">Average Crowd Hazard Reports</h3>
           <span class="bg-red-500/20 text-red-300 text-[10px] font-bold px-2 py-0.5 rounded border border-red-500/30 uppercase">HAZARD</span>
         </div>
-        <div class="text-3xl font-bold mb-1">1,245</div>
+        <div id="hazardCount" class="text-3xl font-bold mb-1">0</div>
         <div class="flex justify-between items-end text-xs">
           <span class="opacity-70">123 Cases Pending Validation</span>
           <span class="text-green-400 flex items-center font-medium">
@@ -131,7 +131,7 @@
           <h3 class="text-sm font-semibold opacity-90">Active SOS / Incidents</h3>
           <span class="bg-green-500/20 text-green-300 text-[10px] font-bold px-2 py-0.5 rounded border border-green-500/30 uppercase">Active</span>
         </div>
-        <div class="text-3xl font-bold mb-1 flex items-baseline gap-1">42 <span class="text-sm font-normal opacity-70">cases</span></div>
+        <div class="text-3xl font-bold mb-1 flex items-baseline gap-1"><span id="activeSosCount">0</span> <span class="text-sm font-normal opacity-70">cases</span></div>
         <div class="flex justify-between items-end text-xs">
           <span class="opacity-70">Immediate Dispatch Required</span>
           <span class="text-green-400 flex items-center font-medium">
@@ -146,7 +146,7 @@
           <h3 class="text-sm font-semibold opacity-90">Resolved Reports</h3>
           <span class="bg-green-500/20 text-green-300 text-[10px] font-bold px-2 py-0.5 rounded border border-green-500/30 uppercase">Normal</span>
         </div>
-        <div class="text-3xl font-bold mb-1 flex items-baseline gap-1">342 <span class="text-sm font-normal opacity-70">cleared</span></div>
+        <div class="text-3xl font-bold mb-1 flex items-baseline gap-1"><span id="resolvedCount">0</span> <span class="text-sm font-normal opacity-70">cleared</span></div>
         <div class="flex justify-between items-end text-xs">
           <span class="opacity-70">In the last 24 hours</span>
           <span class="text-red-300 flex items-center font-medium">
@@ -181,7 +181,7 @@
         
         <div class="flex-1 flex flex-col items-center justify-center relative min-h-[200px]">
           <div class="text-center z-10 mb-8">
-            <div class="text-4xl font-extrabold text-gray-800">15,417</div>
+            <div id="totalReportsCount" class="text-4xl font-extrabold text-gray-800">0</div>
             <div class="text-xs text-gray-400 font-medium">Total Validated Reports</div>
           </div>
 
@@ -399,5 +399,71 @@
       }
     });
   </script>
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDCMWPvDEKEGWYiyL8ozobe778o1ZbudHY",
+    authDomain: "marooner-s-map-9bd81.firebaseapp.com",
+    projectId: "marooner-s-map-9bd81",
+    storageBucket: "marooner-s-map-9bd81.firebasestorage.app",
+    messagingSenderId: "630717954342",
+    appId: "1:630717954342:web:d83fcde58c2a7efd8129e7",
+    measurementId: "G-DWJKH47FPM"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Function to listen for real-time updates from your database
+  function listenToAnalytics() {
+    // Make sure "reports" matches the exact name of your Firestore collection
+    const reportsRef = collection(db, "reports");
+
+    // onSnapshot listens for real-time changes
+    onSnapshot(reportsRef, (snapshot) => {
+      let totalReports = 0;
+      let totalHazards = 0;
+      let activeSos = 0;
+      let resolvedReports = 0;
+
+      snapshot.forEach((doc) => {
+        const report = doc.data();
+        totalReports++;
+
+        // Note: Make sure "incidentType" and "status" exactly match the field names in your Firestore database.
+        // Also ensure "Hazard", "SOS", and "Resolved" match the exact text values you are saving.
+        
+        if (report.incidentType === "Hazard") {
+            totalHazards++;
+        }
+        
+        if (report.incidentType === "SOS" && report.status !== "Resolved") {
+            activeSos++;
+        }
+
+        if (report.status === "Resolved") {
+            resolvedReports++;
+        }
+      });
+
+      // Inject the calculated totals into the HTML dynamically
+      document.getElementById('totalReportsCount').innerText = totalReports.toLocaleString();
+      document.getElementById('hazardCount').innerText = totalHazards.toLocaleString();
+      document.getElementById('activeSosCount').innerText = activeSos.toLocaleString();
+      document.getElementById('resolvedCount').innerText = resolvedReports.toLocaleString();
+
+    }, (error) => {
+      console.error("Error fetching real-time analytics: ", error);
+    });
+  }
+
+  // Start listening as soon as the page loads
+  listenToAnalytics();
+  </script>
+
 </body>
 </html>
