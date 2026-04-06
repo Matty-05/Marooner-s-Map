@@ -98,10 +98,8 @@
         <button id="tabCommunity" class="px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition">Community Reports</button>
       </div>
 
-      <!-- My Reports Tab -->
       <div id="contentMyReports" class="flex-1 overflow-y-auto p-6 space-y-4">
 
-        <!-- Report card with image attachment example -->
         <div class="border border-gray-200 rounded-xl p-5 hover:border-[#95D3A2] transition bg-gray-50 flex flex-col md:flex-row gap-4 items-start md:items-center">
           <div class="bg-red-100 text-red-600 p-3 rounded-lg flex-shrink-0">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
@@ -151,42 +149,12 @@
           </div>
         </div>
 
-        <!-- Dynamically added reports will appear here -->
         <div id="newReportsList"></div>
 
       </div>
 
-      <!-- Community Reports Tab -->
       <div id="contentCommunity" class="hidden flex-1 overflow-y-auto p-6 space-y-4">
-        <div class="border border-gray-200 rounded-xl p-5 hover:border-gray-300 transition bg-white flex flex-col md:flex-row gap-4 items-start md:items-center">
-          <div class="bg-red-50 text-red-500 p-3 rounded-lg flex-shrink-0 border border-red-100">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1 flex-wrap">
-              <h3 class="font-bold text-gray-900 text-lg">Medical Emergency: Need Evacuation</h3>
-              <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">SOS Request</span>
-            </div>
-            <p class="text-sm text-gray-500 mb-2">Location: Zone 3, Brgy. Baybay, Roxas City</p>
-            <div class="flex items-center gap-4 text-xs font-medium text-gray-400">
-              <span class="flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Today, 1:12 PM
-              </span>
-              <span class="flex items-center gap-1 text-gray-400 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                SMS Source: [Private/Hidden]
-              </span>
-            </div>
-          </div>
-          <div class="text-right flex flex-col items-end gap-2">
-            <span class="bg-gray-100 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-200">Reported</span>
-            <button class="text-xs text-[#3B5B47] font-semibold hover:underline transition flex items-center gap-1">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
-              Upvote to Verify
-            </button>
-          </div>
-        </div>
-
+        
         <div class="border border-gray-200 rounded-xl p-5 hover:border-gray-300 transition bg-white flex flex-col md:flex-row gap-4 items-start md:items-center">
           <div class="bg-yellow-50 text-yellow-600 p-3 rounded-lg flex-shrink-0 border border-yellow-100">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -202,16 +170,14 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Today, 8:30 AM
               </span>
               <span class="flex items-center gap-1 text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                Reporter: Maria S. (Web)
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg> Reporter: Maria S. (Web)
               </span>
             </div>
           </div>
           <div class="text-right flex flex-col items-end gap-2">
             <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full border border-yellow-200">LGU Dispatched</span>
             <span class="text-xs text-gray-400 font-semibold flex items-center gap-1">
-              <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-              12 Upvotes
+              <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 12 Upvotes
             </span>
           </div>
         </div>
@@ -231,8 +197,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Yesterday, 6:00 AM
               </span>
               <span class="flex items-center gap-1 text-gray-400 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                Call Source: [Private/Hidden]
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg> Call Source: [Private/Hidden]
               </span>
             </div>
           </div>
@@ -240,8 +205,13 @@
             <span class="bg-gray-100 text-gray-500 text-xs font-bold px-3 py-1 rounded-full border border-gray-200">Cleared by LGU</span>
           </div>
         </div>
+
+        <div id="communityReportsList"></div>
+
       </div>
 
+    </div>
+  </div>
     </div>
   </div>
 
@@ -470,105 +440,7 @@
       });
     }
 
-    // ─── Submit report ───────────────────────────────────────
-    document.getElementById('submitReportBtn').addEventListener('click', submitReport);
 
-    function submitReport() {
-      const title = document.getElementById('reportTitle').value.trim();
-      const location = document.getElementById('reportLocation').value.trim();
-      const description = document.getElementById('reportDescription').value.trim();
-      const errorEl = document.getElementById('formError');
-
-      if (!title || !location || !selectedType) {
-        errorEl.classList.remove('hidden');
-        return;
-      }
-      errorEl.classList.add('hidden');
-
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
-
-      // Build attachment HTML for card
-      let attachmentHTML = '';
-      if (selectedFiles.length > 0) {
-        const thumbs = selectedFiles.map(f => {
-          if (f.isImage) {
-            return `<img src="${f.dataUrl}" alt="${f.name}" class="attachment-img" onclick="openLightbox('${f.dataUrl}', '${escapeHtml(f.name)}')" title="${escapeHtml(f.name)}">`;
-          } else if (f.isVideo) {
-            return `<a href="${f.dataUrl}" download="${escapeHtml(f.name)}" class="attachment-doc" title="${escapeHtml(f.name)}">
-              <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.868v6.264a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-              <span class="text-[9px] text-gray-500 mt-1 px-1 truncate w-full text-center">Video</span>
-            </a>`;
-          } else {
-            return `<a href="${f.dataUrl}" download="${escapeHtml(f.name)}" class="attachment-doc" title="${escapeHtml(f.name)}">
-              <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-              <span class="text-[9px] text-gray-500 mt-1 px-1 truncate w-full text-center">Doc</span>
-            </a>`;
-          }
-        }).join('');
-        attachmentHTML = `
-          <div class="mt-3 pt-3 border-t border-gray-100">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-2 flex items-center gap-1">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-              ${selectedFiles.length} Attachment${selectedFiles.length > 1 ? 's' : ''}
-            </p>
-            <div class="flex flex-wrap gap-2">${thumbs}</div>
-          </div>`;
-      }
-
-      // Type badge colors
-      const typeMeta = {
-        'SOS Request': { bg: 'bg-red-100', icon: 'text-red-600', badge: 'bg-red-500' },
-        'Hazard':      { bg: 'bg-yellow-100', icon: 'text-yellow-600', badge: 'bg-yellow-500' },
-        'Info':        { bg: 'bg-blue-100', icon: 'text-blue-600', badge: 'bg-blue-500' },
-      };
-      const meta = typeMeta[selectedType] || typeMeta['Info'];
-
-      const typeIcons = {
-        'SOS Request': `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>`,
-        'Hazard': `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>`,
-        'Info': `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>`,
-      };
-
-      const descHTML = description
-        ? `<p class="text-sm text-gray-500 mb-2 mt-1">${escapeHtml(description)}</p>`
-        : '';
-
-      const card = document.createElement('div');
-      card.className = 'border border-gray-200 rounded-xl p-5 hover:border-[#95D3A2] transition bg-gray-50';
-      card.innerHTML = `
-        <div class="flex flex-col md:flex-row gap-4 items-start md:items-start">
-          <div class="${meta.bg} ${meta.icon} p-3 rounded-lg flex-shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">${typeIcons[selectedType]}</svg>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1 flex-wrap">
-              <h3 class="font-bold text-gray-900 text-lg">${escapeHtml(title)}</h3>
-              <span class="${meta.badge} text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">${selectedType}</span>
-            </div>
-            <p class="text-sm text-gray-500">Location: ${escapeHtml(location)}</p>
-            ${descHTML}
-            <div class="flex items-center gap-4 text-xs font-medium text-gray-400 mt-2">
-              <span class="flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> Today, ${timeStr}
-              </span>
-              <span class="flex items-center gap-1">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg> Via Web Interface
-              </span>
-            </div>
-            ${attachmentHTML}
-          </div>
-          <div class="text-right flex flex-col items-end gap-2 flex-shrink-0">
-            <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full border border-yellow-200">Pending</span>
-            <button class="text-xs text-gray-400 hover:text-red-500 underline transition" onclick="this.closest('.border').remove()">Cancel Report</button>
-          </div>
-        </div>`;
-
-      const newReportsList = document.getElementById('newReportsList');
-      newReportsList.insertBefore(card, newReportsList.firstChild);
-
-      closeModal();
-    }
 
     // ─── Lightbox ────────────────────────────────────────────
     function openLightbox(src, alt) {
@@ -629,6 +501,292 @@
         profileCircle.textContent = initials.substring(0, 2);
       }
     });
+  </script>
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyDCMWPvDEKEGWYiyL8ozobe778o1ZbudHY",
+    authDomain: "marooner-s-map-9bd81.firebaseapp.com",
+    projectId: "marooner-s-map-9bd81",
+    storageBucket: "marooner-s-map-9bd81.firebasestorage.app",
+    messagingSenderId: "630717954342",
+    appId: "1:630717954342:web:d83fcde58c2a7efd8129e7",
+    measurementId: "G-DWJKH47FPM"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app); // Initialize Auth
+
+  // --- TAB SWITCHING LOGIC ---
+  const tabMyReports = document.getElementById('tabMyReports');
+  const tabCommunity = document.getElementById('tabCommunity');
+  const contentMyReports = document.getElementById('contentMyReports');
+  const contentCommunity = document.getElementById('contentCommunity');
+
+  tabMyReports.addEventListener('click', () => {
+    tabMyReports.className = "px-6 py-3 font-bold text-sm border-b-2 border-[#3B5B47] text-[#3B5B47] transition";
+    tabCommunity.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition";
+    contentMyReports.classList.remove('hidden');
+    contentCommunity.classList.add('hidden');
+  });
+
+  tabCommunity.addEventListener('click', () => {
+    tabCommunity.className = "px-6 py-3 font-bold text-sm border-b-2 border-[#3B5B47] text-[#3B5B47] transition";
+    tabMyReports.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition";
+    contentCommunity.classList.remove('hidden');
+    contentMyReports.classList.add('hidden');
+  });
+
+  // --- REVERSE GEOCODING (With Persistent LocalStorage Caching) ---
+  
+  // 1. Grab the saved cache from the browser's hard drive (or start empty)
+  let locationCache = JSON.parse(localStorage.getItem('maroonerMapCache')) || {};
+
+  async function getPlaceName(lat, lng) {
+    // Round to 4 decimal places so very close pins share the same cache key
+    const cacheKey = `${parseFloat(lat).toFixed(4)},${parseFloat(lng).toFixed(4)}`;
+    
+    // If we already know this location, return it instantly!
+    if (locationCache[cacheKey]) {
+        return locationCache[cacheKey];
+    }
+
+    try {
+      // Add a tiny random delay so if multiple NEW pins are added, they don't hit at the exact same millisecond
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
+
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      
+      // If API blocks us, gracefully fallback to coordinates instead of crashing
+      if (!res.ok) {
+          console.warn("Map API busy. Falling back to coordinates.");
+          return `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
+      }
+
+      const data = await res.json();
+      let placeName = "Unknown Location";
+      
+      if (data && data.address) {
+         const addr = data.address;
+         
+         const localArea = addr.neighbourhood || addr.village || addr.hamlet || addr.suburb || addr.road || "";
+         const cityTown = addr.city || addr.municipality || addr.town || "";
+         const province = addr.county || addr.state || addr.region || "";
+
+         const parts = [localArea, cityTown, province].filter(part => part.trim() !== "");
+         placeName = parts.join(", ");
+         
+         if (parts.length < 2 && data.display_name) {
+            placeName = data.display_name.split(",").slice(0, 3).join(",").trim();
+         }
+      }
+      
+      // 2. Save it to our memory variable
+      locationCache[cacheKey] = placeName || `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
+      
+      // 3. AND save it permanently to the browser! It will now survive page refreshes.
+      localStorage.setItem('maroonerMapCache', JSON.stringify(locationCache));
+      
+      return locationCache[cacheKey];
+    } catch (err) {
+      console.error("Geocoding error:", err);
+      return `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
+    }
+  }
+
+  // --- FIREBASE LISTENER ---
+  function loadReports(currentUserId) {
+    console.log("Loading reports for user ID:", currentUserId);
+    const reportsRef = collection(db, "reports");
+
+    onSnapshot(reportsRef, (snapshot) => {
+      console.log(`Found ${snapshot.size} total reports in database.`);
+      
+      const myReportsContainer = document.getElementById("newReportsList");
+      const communityContainer = document.getElementById("communityReportsList");
+      
+      if (!myReportsContainer || !communityContainer) {
+          console.error("HTML Error: Could not find the container divs! Check your IDs.");
+          return;
+      }
+
+      myReportsContainer.innerHTML = ""; 
+      communityContainer.innerHTML = ""; 
+
+      
+      snapshot.forEach(async (doc) => {
+        try {
+            const data = doc.data();
+            
+            // Map exactly to your database fields safely
+            const type = data.type || data.incidentType || "Info"; 
+            const title = data.title || data.description || "Untitled Report";
+            const status = data.status || "Reported";
+            const lat = data.lat || data.latitude; 
+            const lng = data.lng || data.longitude;
+            const reportOwnerId = data.userId || null; 
+
+            // Safely handle timestamps (checking for both old and new naming)
+            let timeString = "Recently";
+            const timeData = data.createdAt || data.timestamp; 
+
+            if (timeData) {
+               // Handle Firestore timestamp vs normal date string safely
+               const date = timeData.toDate ? timeData.toDate() : new Date(timeData);
+               timeString = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ", " + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+            
+            // Styling based on type
+            let iconSvg = ""; let typeColor = ""; let bgLight = ""; let textDark = "";
+            if (type.includes("SOS") || type.toLowerCase().includes("emergency")) {
+               typeColor = "bg-red-500"; bgLight = "bg-red-100"; textDark = "text-red-600";
+               iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+            } else if (type === "Hazard" || type.toLowerCase().includes("warning")) {
+               typeColor = "bg-yellow-500"; bgLight = "bg-yellow-100"; textDark = "text-yellow-600";
+               iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+            } else {
+               typeColor = "bg-[#3B5B47]"; bgLight = "bg-[#f0faf2]"; textDark = "text-[#3B5B47]";
+               iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            }
+
+            let statusBadge = `<span class="bg-gray-100 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-200">${status}</span>`;
+
+            const generateCard = (tabPrefix) => `
+              <div class="border border-gray-200 rounded-xl p-5 hover:border-[#95D3A2] transition bg-white flex flex-col md:flex-row gap-4 items-start md:items-center shadow-sm">
+                <div class="${bgLight} ${textDark} p-3 rounded-lg flex-shrink-0">
+                  ${iconSvg}
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1 flex-wrap">
+                    <h3 class="font-bold text-gray-900 text-lg">${title}</h3>
+                    <span class="${typeColor} text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">${type}</span>
+                  </div>
+                  <p class="text-sm text-gray-500 mb-2" id="loc-${tabPrefix}-${doc.id}">Location: Scanning coordinates...</p>
+                  <div class="flex items-center gap-4 text-xs font-medium text-gray-400">
+                    <span class="flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg> 
+                      ${timeString}
+                    </span>
+                  </div>
+                </div>
+                <div class="text-right flex flex-col items-end gap-2">
+                  ${statusBadge}
+                </div>
+              </div>
+            `;
+            
+            // 1. ALL reports go to the Community Tab
+            communityContainer.insertAdjacentHTML('beforeend', generateCard('com'));
+            
+            console.log(`Checking Report: ${title} | Owner: ${reportOwnerId} | CurrentUser: ${currentUserId}`);
+
+            if (currentUserId && reportOwnerId !== null && reportOwnerId === currentUserId) {
+                console.log("✅ MATCH FOUND! Adding to My Reports.");
+                myReportsContainer.insertAdjacentHTML('beforeend', generateCard('my'));
+            }
+
+            // Reverse Geocode
+            let placeName = data.location || "Coordinates locked"; 
+            if (lat && lng) {
+                placeName = await getPlaceName(lat, lng);
+            }
+            
+            const locCom = document.getElementById(`loc-com-${doc.id}`);
+            if (locCom) locCom.innerText = `Location: ${placeName}`;
+
+            const locMy = document.getElementById(`loc-my-${doc.id}`);
+            if (locMy) locMy.innerText = `Location: ${placeName}`;
+            
+        } catch (innerError) {
+            console.error("Error processing document:", doc.id, innerError);
+        }
+      });
+    }, (error) => {
+        console.error("Error fetching reports from Firestore:", error);
+    });
+  }
+
+  // --- WAIT FOR AUTH BEFORE LOADING ---
+  onAuthStateChanged(auth, (user) => {
+    console.log("Auth State Changed. User is:", user ? user.uid : "Guest");
+    
+    // Clear the lists so they don't double-up when the user logs in
+    document.getElementById("newReportsList").innerHTML = "";
+    document.getElementById("communityReportsList").innerHTML = "";
+
+    if (user) {
+      loadReports(user.uid); // Load with real ID
+    } else {
+      loadReports(null); // Load as guest
+    }
+  });
+
+  // --- SUBMIT NEW REPORT TO FIREBASE ---
+  const submitBtn = document.getElementById('submitReportBtn');
+  
+  submitBtn.addEventListener('click', async () => {
+    // 1. Check if a user is actually logged in
+    const user = auth.currentUser;
+    if (!user) {
+      alert("You must be logged in to submit a report.");
+      return;
+    }
+
+    // 2. Grab the form values
+    const title = document.getElementById('reportTitle').value.trim();
+    const locationStr = document.getElementById('reportLocation').value.trim();
+    const description = document.getElementById('reportDescription').value.trim();
+    const errorEl = document.getElementById('formError');
+
+    // To get the selected type, we check which button has the active classes
+    const activeTypeBtn = document.querySelector('.type-btn.ring-2');
+    const type = activeTypeBtn ? activeTypeBtn.dataset.type : "";
+
+    // 3. Validation
+    if (!title || !locationStr || !type) {
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    errorEl.classList.add('hidden');
+
+    // 4. Change button state to show it's loading
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = "Submitting...";
+    submitBtn.disabled = true;
+
+    try {
+      // 5. Save directly to Firestore! 
+      await addDoc(collection(db, "reports"), {
+        title: title,
+        description: description,
+        location: locationStr, // This is the typed string (e.g., "Brgy. Mat-y")
+        incidentType: type,
+        status: "Reported",
+        // THIS IS THE CRITICAL LINE:
+        userId: user.uid, 
+        reporterEmail: user.email, // Optional: helpful for admin tracking
+        createdAt: serverTimestamp(), // Let Firebase set the exact server time
+        // Note: For real map pins, you'd also want to save latitude/longitude here 
+        // if your form has a way to capture them (like a map picker or geolocation API).
+      });
+
+      // 6. Success! Close modal and reset
+      document.getElementById('closeModalBtn').click(); // Triggers your existing close function
+      
+    } catch (error) {
+      console.error("Error submitting report: ", error);
+      alert("Failed to submit report. Please try again.");
+    } finally {
+      // Reset button state
+      submitBtn.innerHTML = originalBtnText;
+      submitBtn.disabled = false;
+    }
+  });
+
   </script>
 </body>
 </html>
