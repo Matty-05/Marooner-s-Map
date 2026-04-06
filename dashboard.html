@@ -254,6 +254,7 @@
   </div>
 
   <script type="module">
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { 
       getFirestore, 
@@ -573,7 +574,13 @@
             }
 
             try {
-                // Add document to Firestore
+                // 1. Initialize auth inside this script
+                const auth = getAuth(); 
+                
+                // 2. Now you can safely grab the user
+                const user = auth.currentUser; 
+                
+                // 3. Add document to Firestore
                 await addDoc(collection(db, "reports"), {
                     type: selectedIncidentType,
                     title: titleValue,
@@ -581,16 +588,17 @@
                     lat: clickedCoordinates.lat,
                     lng: clickedCoordinates.lng,
                     reportedBy: savedName,
+                    userId: user ? user.uid : "anonymous", // This will now work perfectly!
                     timestamp: serverTimestamp()
                 });
+                
                 closeModal();
-            } catch (error) {
-                alert("Error saving report: " + error.message);
+            } catch(error) {
+                console.error("Error adding document: ", error);
             }
         });
 
         // --- 5. LOAD FROM DATABASE (REAL-TIME) ---
-        // This query gets reports and orders them by time
         const q = query(collection(db, "reports"), orderBy("timestamp", "asc"));
         
         onSnapshot(q, (snapshot) => {
@@ -598,12 +606,11 @@
                 if (change.type === "added") {
                     const data = change.doc.data();
                     
-                    // Choose icon based on type
+                    // 1. MAP MARKER LOGIC (Your original code)
                     let iconToUse = blueIcon;
                     if (data.type === 'SOS Request') iconToUse = redIcon;
                     else if (data.type === 'Hazard') iconToUse = yellowIcon;
 
-                    // Add the marker to the map
                     L.marker([data.lat, data.lng], {icon: iconToUse})
                         .addTo(map)
                         .bindPopup(`
@@ -614,6 +621,28 @@
                                 <i class="text-xs text-gray-400 font-sans">By ${data.reportedBy}</i>
                             </div>
                         `);
+
+                    // 2. LIST UI LOGIC (The missing piece!)
+                    // Grab the empty div where you want the reports to show up
+                    const listContainer = document.getElementById('communityReportsList'); 
+                    
+                    if (listContainer) {
+                        // Create a new div for this specific report
+                        const reportCard = document.createElement('div');
+                        
+                        // Add some basic styling (adjust these Tailwind classes to match your design!)
+                        reportCard.className = 'p-4 mb-4 bg-white rounded shadow border-l-4 border-blue-500'; 
+                        
+                        // Build the HTML for the card
+                        reportCard.innerHTML = `
+                            <h3 class="font-bold text-lg">${data.type}: ${data.title}</h3>
+                            <p class="text-gray-600">${data.description || 'No description provided.'}</p>
+                            <p class="text-xs text-gray-400 mt-2">Reported by: ${data.reportedBy}</p>
+                        `;
+                        
+                        // Actually inject it into the page!
+                        listContainer.appendChild(reportCard);
+                    }
                 }
             });
         });
