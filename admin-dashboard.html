@@ -9,14 +9,11 @@
   <title>LGU Command Center - Marooner's Map</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Custom brand colors */
     .bg-brand-dark { background-color: #3B5B47; }
     .bg-brand-light { background-color: #95D3A2; }
     .text-brand-light { color: #95D3A2; }
     .text-brand-dark { color: #3B5B47; }
     .bg-map-light { background-color: #EAF4FB; }
-    
-    /* Custom Scrollbar for the queue */
     .queue-scroll::-webkit-scrollbar { width: 6px; }
     .queue-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
     .queue-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -30,12 +27,10 @@
       <a href="admin-dashboard.html" class="w-10 h-10 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg md:mb-2 transition transform hover:scale-105 border-2 border-white/20">
         <svg class="w-5 h-5 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
       </a>
-      
       <a href="admin-sms-list.html" class="w-10 h-10 md:w-12 md:h-12 bg-[#95D3A2]/20 rounded-xl flex items-center justify-center text-brand-light cursor-pointer transition shadow-inner border border-[#95D3A2]/30">
         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
       </a>
     </div>
-    
     <a href="index.html" class="w-10 h-10 hover:bg-red-500/20 rounded-xl flex items-center justify-center text-red-400 hover:text-red-500 cursor-pointer ml-auto md:ml-0 md:mt-auto transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
     </a>
@@ -53,7 +48,6 @@
       </div>
 
       <div class="flex items-center gap-5">
-        
         <div class="flex gap-3">
           <button class="bg-white border border-gray-200 text-gray-700 text-xs md:text-sm font-bold px-3 md:px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 transition flex items-center gap-2">
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -66,38 +60,33 @@
             <span class="md:hidden">Alert</span>
           </button>
         </div>
-
         <div class="hidden md:block h-8 w-px bg-gray-300"></div>
-
         <div class="hidden md:flex items-center gap-3">
-          <div class="w-10 h-10 bg-[#3B5B47] text-[#95D3A2] rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white">
-            AD
-          </div>
+          <div class="w-10 h-10 bg-[#3B5B47] text-[#95D3A2] rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white">AD</div>
           <div>
             <p class="text-sm font-bold text-gray-800 leading-none">Admin</p>
             <p class="text-xs text-gray-500 font-medium mt-1">LGU Official</p>
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 shrink-0">
       <div class="bg-white rounded-xl p-4 shadow-sm border border-l-4 border-l-red-500 flex flex-col">
         <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending SOS</span>
-        <span class="text-2xl md:text-3xl font-extrabold text-gray-900">12</span>
+        <span id="statSOS" class="text-2xl md:text-3xl font-extrabold text-gray-900">0</span>
       </div>
       <div class="bg-white rounded-xl p-4 shadow-sm border border-l-4 border-l-yellow-500 flex flex-col">
         <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending Hazard</span>
-        <span class="text-2xl md:text-3xl font-extrabold text-gray-900">34</span>
+        <span id="statHazard" class="text-2xl md:text-3xl font-extrabold text-gray-900">0</span>
       </div>
       <div class="bg-white rounded-xl p-4 shadow-sm border border-l-4 border-l-blue-500 flex flex-col">
         <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Units Dispatched</span>
-        <span class="text-2xl md:text-3xl font-extrabold text-gray-900">8</span>
+        <span id="statDispatched" class="text-2xl md:text-3xl font-extrabold text-gray-900">0</span>
       </div>
       <div class="bg-[#3B5B47] text-white rounded-xl p-4 shadow-md flex flex-col justify-center">
         <span class="text-[10px] md:text-xs text-[#95D3A2] font-bold uppercase tracking-wider mb-1">Resolved Today</span>
-        <span class="text-2xl md:text-3xl font-extrabold">142</span>
+        <span id="statResolved" class="text-2xl md:text-3xl font-extrabold">0</span>
       </div>
     </div>
 
@@ -110,59 +99,37 @@
             Live Map
           </h2>
         </div>
-        
         <div class="flex-1 bg-map-light relative overflow-hidden flex items-center justify-center">
           <div id="map">
             <script>
               var map = L.map('map').setView([10.6410, 122.2355], 13);
               L.tileLayer('https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=pxJ2FnvFl8J48s3zwqMi',
-              {attribution:'<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'}).addTo(map);
+              {attribution:'<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a>'}).addTo(map);
             </script>
           </div>
         </div>
       </div>
 
       <div class="lg:w-5/12 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden min-h-[300px]">
-        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-          <h2 class="font-bold text-gray-800 flex items-center gap-2">
-            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-            Incident Queue
-          </h2>
-          <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full">46 Total</span>
-        </div>
-
-        <div class="flex-1 overflow-y-auto queue-scroll p-4 space-y-3">
-          
-          <div class="queue-item border border-red-200 bg-red-50/30 rounded-xl p-4 flex flex-col gap-3 transition">
-            <div class="flex justify-between items-start">
-              <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">SOS Request</span>
-                  <span class="text-xs text-gray-500 font-semibold flex items-center gap-1"><svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg> SMS Gateway</span>
-                </div>
-                <h3 class="font-bold text-gray-900 text-sm">"TABANG Stranded sa bubong- tubig lagpas kisame"</h3>
-                <p class="text-xs text-gray-500 mt-1">Parsed Loc: Brgy. Mat-y, Miagao | <span class="text-blue-600 font-semibold">0912-345-6789</span></p>
-              </div>
-              <span class="text-[10px] text-gray-400 font-bold">2m ago</span>
-            </div>
-            
-            <div class="flex items-center gap-3 mt-1">
-              <select onchange="updateStatus(this)" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-red-500 shadow-sm cursor-pointer w-32">
-                <option value="reported" selected>🚨 Reported</option>
-                <option value="dispatched">🚓 Dispatched</option>
-                <option value="resolved">✅ Resolved</option>
-              </select>
-              
-              <button class="text-xs text-blue-600 font-bold hover:underline">View on Map</button>
-
-              <button onclick="removeReport(this)" class="text-xs text-red-500 font-bold hover:text-red-700 transition flex items-center gap-1 ml-auto">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                Remove
-              </button>
-            </div>
+        <div class="pt-4 px-4 border-b border-gray-100 flex flex-col bg-gray-50 gap-4">
+          <div class="flex justify-between items-center">
+            <h2 class="font-bold text-gray-800 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+              Incident Queue
+            </h2>
+            <span id="queueTotalBadge" class="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full">0 Total</span>
           </div>
-
+          
+          <div class="flex gap-4" id="filterTabs">
+            <button data-filter="All" class="filter-tab pb-2 text-sm font-bold border-b-2 border-[#3B5B47] text-[#3B5B47] transition">All</button>
+            <button data-filter="Reported" class="filter-tab pb-2 text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition">Reported</button>
+            <button data-filter="Dispatched" class="filter-tab pb-2 text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition">Dispatched</button>
+            <button data-filter="Resolved" class="filter-tab pb-2 text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition">Resolved</button>
+          </div>
         </div>
+
+        <div class="flex-1 overflow-y-auto queue-scroll p-4 space-y-3" id="queueContainer">
+          </div>
       </div>
     </div>
   </div>
@@ -191,38 +158,153 @@
       toast.classList.remove('translate-y-20', 'opacity-0');
       setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
     }
-
-    function updateStatus(selectElement) {
-      const statusValue = selectElement.value;
-      let msg = "";
-      if(statusValue === 'resolved') {
-        selectElement.className = "bg-gray-100 border border-gray-200 text-gray-600 text-xs font-bold rounded-lg px-2 py-1.5 cursor-pointer w-32";
-        msg = "Report marked as RESOLVED. Archiving...";
-      } else if (statusValue === 'dispatched') {
-        selectElement.className = "bg-white border border-blue-300 text-blue-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer w-32";
-        msg = "Unit DISPATCHED. Updating public map...";
-      } else {
-        selectElement.className = "bg-white border border-red-300 text-red-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-red-500 shadow-sm cursor-pointer w-32";
-        msg = "Status reverted to REPORTED.";
-      }
-      showToast(msg, false);
-    }
-
-    function removeReport(btnElement) {
-      const queueItem = btnElement.closest('.queue-item');
-      queueItem.style.opacity = '0';
-      queueItem.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        queueItem.remove();
-        showToast("Report permanently removed from queue.", true);
-      }, 200);
-    }
   </script>
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script>
-    // Keep your Firebase Script exactly as it was!
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCMWPvDEKEGWYiyL8ozobe778o1ZbudHY",
+      authDomain: "marooner-s-map-9bd81.firebaseapp.com",
+      projectId: "marooner-s-map-9bd81",
+      storageBucket: "marooner-s-map-9bd81.firebasestorage.app",
+      messagingSenderId: "630717954342",
+      appId: "1:630717954342:web:d83fcde58c2a7efd8129e7",
+      measurementId: "G-DWJKH47FPM"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const createIcon = (color) => new L.Icon({
+        iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+    });
+
+    let adminMarkers = []; 
+    let allReportsData = []; 
+    let currentFilter = "All";
+
+    // Tab Filter Logic
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        // Update tab visuals
+        document.querySelectorAll('.filter-tab').forEach(t => {
+          t.classList.remove('border-[#3B5B47]', 'text-[#3B5B47]', 'font-bold');
+          t.classList.add('border-transparent', 'text-gray-500', 'font-semibold');
+        });
+        e.target.classList.remove('border-transparent', 'text-gray-500', 'font-semibold');
+        e.target.classList.add('border-[#3B5B47]', 'text-[#3B5B47]', 'font-bold');
+
+        currentFilter = e.target.dataset.filter;
+        renderQueue(); // Re-draw list based on new filter
+      });
+    });
+
+    onSnapshot(collection(db, "reports"), (snapshot) => {
+      allReportsData = [];
+      let pendingSOS = 0, pendingHazard = 0, dispatched = 0, resolved = 0;
+
+      adminMarkers.forEach(m => map.removeLayer(m));
+      adminMarkers = [];
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const type = data.type || "Info";
+        const status = data.status || "Reported";
+        const title = data.title || "Untitled";
+
+        // Save for filtering
+        allReportsData.push({ id: docSnap.id, data: data, type, status, title });
+
+        // Calculate Analytics
+        if (status === "Resolved" || status === "Cleared by LGU") resolved++;
+        else if (status === "Dispatched" || status === "In Progress") dispatched++;
+        else {
+          if (type.includes("SOS")) pendingSOS++;
+          if (type.includes("Hazard")) pendingHazard++;
+        }
+
+        // Draw Map Pins
+        if (data.lat && data.lng) {
+          let icon = createIcon('blue');
+          if (type.includes("SOS")) icon = createIcon('red');
+          else if (type.includes("Hazard")) icon = createIcon('yellow');
+
+          const marker = L.marker([data.lat, data.lng], {icon}).addTo(map)
+            .bindPopup(`<b class="uppercase text-xs text-gray-500">${type}</b><br><strong class="text-sm">${title}</strong><br><i class="text-xs">${status}</i>`);
+          adminMarkers.push(marker);
+        }
+      });
+
+      // Update Statistic Cards
+      document.getElementById('statSOS').textContent = pendingSOS;
+      document.getElementById('statHazard').textContent = pendingHazard;
+      document.getElementById('statDispatched').textContent = dispatched;
+      document.getElementById('statResolved').textContent = resolved;
+
+      renderQueue(); 
+    });
+
+    function renderQueue() {
+      const queueContainer = document.getElementById('queueContainer');
+      queueContainer.innerHTML = '';
+      let filteredCount = 0;
+
+      allReportsData.forEach(report => {
+        // Check Filter condition
+        if (currentFilter !== "All" && report.status !== currentFilter) return;
+        
+        filteredCount++;
+        let typeColor = "bg-blue-500", borderColor = "border-blue-200", bgTint = "bg-blue-50/30";
+        if (report.type.includes("SOS")) { typeColor = "bg-red-500"; borderColor = "border-red-200"; bgTint = "bg-red-50/30"; }
+        else if (report.type.includes("Hazard")) { typeColor = "bg-yellow-500"; borderColor = "border-yellow-200"; bgTint = "bg-yellow-50/30"; }
+
+        const queueHtml = `
+          <div class="queue-item border ${borderColor} ${bgTint} rounded-xl p-4 flex flex-col gap-3 transition">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="${typeColor} text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">${report.type}</span>
+                  <span class="text-xs text-gray-500 font-semibold flex items-center gap-1">Web App</span>
+                </div>
+                <h3 class="font-bold text-gray-900 text-sm">"${report.title}"</h3>
+                <p class="text-xs text-gray-500 mt-1">Loc: ${report.data.location || 'See Map Pin'} | <span class="text-blue-600 font-semibold">${report.data.reportedBy || 'Anonymous'}</span></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 mt-1">
+              <select onchange="updateStatusDb(this, '${report.id}')" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer w-32">
+                <option value="Reported" ${report.status==='Reported'?'selected':''}>🚨 Reported</option>
+                <option value="Dispatched" ${report.status==='Dispatched'?'selected':''}>🚓 Dispatched</option>
+                <option value="Resolved" ${report.status==='Resolved'?'selected':''}>✅ Resolved</option>
+              </select>
+              <button onclick="removeReportDb(this, '${report.id}')" class="text-xs text-red-500 font-bold hover:text-red-700 transition flex items-center gap-1 ml-auto">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                Remove
+              </button>
+            </div>
+          </div>`;
+        queueContainer.insertAdjacentHTML('afterbegin', queueHtml);
+      });
+
+      document.getElementById('queueTotalBadge').textContent = `${filteredCount} Items`;
+    }
+
+    // Global Functions for the HTML Event Listeners
+    window.updateStatusDb = async (selectElement, docId) => {
+      const newVal = selectElement.value;
+      await updateDoc(doc(db, "reports", docId), { status: newVal });
+      showToast(`Report updated to ${newVal.toUpperCase()}`, false);
+    };
+
+    window.removeReportDb = async (btnElement, docId) => {
+      if(confirm("Permanently delete this report from the database? Users will no longer see it.")) {
+        await deleteDoc(doc(db, "reports", docId));
+        showToast("Report permanently removed.", true);
+      }
+    };
   </script>
 </body>
 </html>
