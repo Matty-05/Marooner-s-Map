@@ -3,136 +3,226 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style> #map {position:absolute; top: 0; bottom: 0; left: 0; right:0;}</style>
   <title>LGU Command Center - Marooner's Map</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Custom brand colors */
     .bg-brand-dark { background-color: #3B5B47; }
     .bg-brand-light { background-color: #95D3A2; }
     .text-brand-light { color: #95D3A2; }
     .text-brand-dark { color: #3B5B47; }
     .bg-map-light { background-color: #EAF4FB; }
-    
-    /* Custom Scrollbar for the queue */
+
     .queue-scroll::-webkit-scrollbar { width: 6px; }
     .queue-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
     .queue-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .queue-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+    /* Image Modal */
+    #imageModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    #imageModal.open { display: flex; }
+
+    .modal-box {
+      background: white;
+      border-radius: 1.25rem;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+      animation: modalIn 0.22s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.93) translateY(12px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .photo-grid { display: grid; gap: 8px; padding: 16px; overflow-y: auto; }
+    .photo-grid.count-1 { grid-template-columns: 1fr; }
+    .photo-grid.count-2 { grid-template-columns: 1fr 1fr; }
+    .photo-grid.count-3 { grid-template-columns: 1fr 1fr; }
+    .photo-grid.count-3 .photo-item:first-child { grid-column: 1 / -1; }
+    .photo-grid.count-4 { grid-template-columns: 1fr 1fr; }
+
+    .photo-item {
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      background: #f3f4f6;
+      aspect-ratio: 4/3;
+    }
+    .photo-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.2s ease;
+      display: block;
+    }
+    .photo-item:hover img { transform: scale(1.04); }
+    .photo-item .photo-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .photo-item:hover .photo-overlay { background: rgba(0,0,0,0.25); }
+    .photo-item .photo-overlay svg { opacity: 0; transition: opacity 0.2s; }
+    .photo-item:hover .photo-overlay svg { opacity: 1; }
+
+    /* No images placeholder */
+    .no-photos {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 48px 16px; color: #9ca3af;
+      gap: 12px;
+    }
+
+    /* Lightbox (full-screen single image) */
+    #lightbox {
+      display: none;
+      position: fixed; inset: 0; z-index: 99999;
+      background: rgba(0,0,0,0.95);
+      align-items: center; justify-content: center;
+    }
+    #lightbox.open { display: flex; }
+    #lightbox img {
+      max-width: 95vw; max-height: 90vh;
+      border-radius: 10px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.7);
+      object-fit: contain;
+    }
+    #lightboxClose {
+      position: absolute; top: 16px; right: 20px;
+      color: white; font-size: 2rem; cursor: pointer;
+      line-height: 1; opacity: 0.8;
+      transition: opacity 0.15s;
+    }
+    #lightboxClose:hover { opacity: 1; }
+
+    /* Photo badge on queue items */
+    .photo-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #eff6ff; color: #2563eb;
+      border: 1px solid #bfdbfe;
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .photo-badge:hover { background: #dbeafe; }
+    .photo-badge.no-img { background: #f9fafb; color: #9ca3af; border-color: #e5e7eb; cursor: default; }
   </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800 h-screen w-screen flex overflow-hidden m-0 p-0">
+<body class="bg-gray-100 font-sans text-gray-800 min-h-screen md:h-screen w-full flex flex-col md:flex-row overflow-x-hidden md:overflow-hidden m-0 p-0">
 
-  <div class="hidden md:flex w-24 bg-[#263D2F] flex-col items-center py-6 justify-between rounded-r-3xl z-20 shadow-2xl h-full flex-shrink-0 border-r border-[#95D3A2]/20">
-    <div class="space-y-8 flex flex-col items-center w-full">
-      <a href="admin-dashboard.html" class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg mb-2 transition transform hover:scale-105 border-2 border-white/20">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+  <!-- Sidebar -->
+  <div class="flex flex-row md:flex-col w-full md:w-24 h-16 md:h-full bg-[#263D2F] items-center px-4 md:px-0 py-0 md:py-6 justify-between md:rounded-r-3xl z-20 shadow-md md:shadow-2xl flex-shrink-0 border-b md:border-b-0 md:border-r border-[#95D3A2]/20">
+    <div class="flex flex-row md:flex-col space-x-4 md:space-x-0 md:space-y-8 items-center">
+      <a href="admin-dashboard.html" class="w-10 h-10 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg md:mb-2 transition transform hover:scale-105 border-2 border-white/20">
+        <svg class="w-5 h-5 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
       </a>
-      
-      <a href="#" class="w-12 h-12 bg-[#95D3A2]/20 rounded-xl flex items-center justify-center text-brand-light cursor-pointer transition shadow-inner border border-[#95D3A2]/30">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
-      </a>
-      
-      <a href="#" class="w-10 h-10 hover:bg-white/10 rounded-xl flex items-center justify-center text-white/50 hover:text-white cursor-pointer transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-      </a>
-      
-      <a href="#" class="w-10 h-10 hover:bg-white/10 rounded-xl flex items-center justify-center text-white/50 hover:text-white cursor-pointer transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+      <a href="admin-sms-list.html" class="w-10 h-10 md:w-12 md:h-12 bg-[#95D3A2]/20 rounded-xl flex items-center justify-center text-brand-light cursor-pointer transition shadow-inner border border-[#95D3A2]/30">
+        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
       </a>
     </div>
-    
-    <a href="login.html" class="w-10 h-10 hover:bg-red-500/20 rounded-xl flex items-center justify-center text-red-400 hover:text-red-500 cursor-pointer mt-auto transition">
+    <a href="index.html" class="w-10 h-10 hover:bg-red-500/20 rounded-xl flex items-center justify-center text-red-400 hover:text-red-500 cursor-pointer ml-auto md:ml-0 md:mt-auto transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
     </a>
   </div>
 
-  <div class="flex-1 flex flex-col h-full w-full p-6 overflow-hidden relative">
-    
-    <div class="flex justify-between items-center mb-6">
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto md:overflow-hidden relative">
+
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
       <div>
         <div class="flex items-center gap-3">
-          <h1 class="text-2xl font-bold text-gray-900 uppercase tracking-wide">LGU Command Center</h1>
-          <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-blue-200">Miagao District</span>
+          <h1 class="text-xl md:text-2xl font-bold text-gray-900 uppercase tracking-wide">LGU Command Center</h1>
+          <span class="hidden md:inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-blue-200">Miagao District</span>
         </div>
         <p class="text-sm text-gray-500 mt-1 font-medium">Monitoring Web and SMS Gateway influx.</p>
       </div>
-
       <div class="flex items-center gap-5">
-        
         <div class="flex gap-3">
-          <button class="bg-white border border-gray-200 text-gray-700 text-sm font-bold px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 transition flex items-center gap-2">
+          <button class="bg-white border border-gray-200 text-gray-700 text-xs md:text-sm font-bold px-3 md:px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 transition flex items-center gap-2">
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            Sync Gateway
+            <span class="hidden md:inline">Sync Gateway</span>
+            <span class="md:hidden">Sync</span>
           </button>
-          <button class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-4 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+          <button class="bg-red-600 hover:bg-red-700 text-white text-xs md:text-sm font-bold px-3 md:px-4 py-2 rounded-lg shadow-md transition flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-            Broadcast Alert
+            <span class="hidden md:inline">Broadcast Alert</span>
+            <span class="md:hidden">Alert</span>
           </button>
         </div>
-
-        <div class="h-8 w-px bg-gray-300"></div>
-
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-[#3B5B47] text-[#95D3A2] rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white">
-            AD
-          </div>
-          <div class="hidden md:block">
+        <div class="hidden md:block h-8 w-px bg-gray-300"></div>
+        <div class="hidden md:flex items-center gap-3">
+          <div class="w-10 h-10 bg-[#3B5B47] text-[#95D3A2] rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white">AD</div>
+          <div>
             <p class="text-sm font-bold text-gray-800 leading-none">Admin</p>
             <p class="text-xs text-gray-500 font-medium mt-1">LGU Official</p>
           </div>
         </div>
-
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 shrink-0">
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 shrink-0">
       <div class="bg-white rounded-xl p-4 shadow-sm border border-l-4 border-l-red-500 flex flex-col">
-        <span class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending SOS (SMS)</span>
-        <span class="text-3xl font-extrabold text-gray-900">12</span>
+        <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending SOS</span>
+        <span class="text-2xl md:text-3xl font-extrabold text-gray-900">12</span>
       </div>
       <div class="bg-white rounded-xl p-4 shadow-sm border border-l-4 border-l-yellow-500 flex flex-col">
-        <span class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending Hazard (Web)</span>
-        <span class="text-3xl font-extrabold text-gray-900">34</span>
+        <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending Hazard</span>
+        <span class="text-2xl md:text-3xl font-extrabold text-gray-900">34</span>
       </div>
       <div class="bg-white rounded-xl p-4 shadow-sm border border-l-4 border-l-blue-500 flex flex-col">
-        <span class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Units Dispatched</span>
-        <span class="text-3xl font-extrabold text-gray-900">8</span>
+        <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Units Dispatched</span>
+        <span class="text-2xl md:text-3xl font-extrabold text-gray-900">8</span>
       </div>
       <div class="bg-[#3B5B47] text-white rounded-xl p-4 shadow-md flex flex-col justify-center">
-        <span class="text-xs text-[#95D3A2] font-bold uppercase tracking-wider mb-1">Issues Resolved Today</span>
-        <span class="text-3xl font-extrabold">142</span>
+        <span class="text-[10px] md:text-xs text-[#95D3A2] font-bold uppercase tracking-wider mb-1">Resolved Today</span>
+        <span class="text-2xl md:text-3xl font-extrabold">142</span>
       </div>
     </div>
 
+    <!-- Map + Queue -->
     <div class="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
-      
-      <div class="lg:w-7/12 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+
+      <!-- Map -->
+      <div class="lg:w-7/12 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden min-h-[300px]">
         <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <h2 class="font-bold text-gray-800 flex items-center gap-2">
             <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-            Live Jurisdiction Map
+            Live Map
           </h2>
-          <div class="flex gap-2">
-            <span class="flex items-center gap-1 text-xs font-semibold bg-red-100 text-red-700 px-2 py-1 rounded"><div class="w-2 h-2 bg-red-500 rounded-full"></div> SOS</span>
-            <span class="flex items-center gap-1 text-xs font-semibold bg-yellow-100 text-yellow-700 px-2 py-1 rounded"><div class="w-2 h-2 bg-yellow-500 rounded-full"></div> Hazard</span>
-            <span class="flex items-center gap-1 text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-1 rounded"><div class="w-2 h-2 bg-blue-500 rounded-full"></div> Dispatched</span>
-          </div>
         </div>
-        
         <div class="flex-1 bg-map-light relative overflow-hidden flex items-center justify-center">
-          <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#3B5B47 1px, transparent 1px); background-size: 20px 20px;"></div>
-          
-          <div class="absolute top-1/4 left-1/4 animate-bounce"><svg class="w-8 h-8 text-red-600 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5" fill="white"/></svg></div>
-          <div class="absolute top-1/2 left-2/3"><svg class="w-8 h-8 text-yellow-500 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5" fill="white"/></svg></div>
-          <div class="absolute bottom-1/3 left-1/3"><svg class="w-8 h-8 text-blue-500 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5" fill="white"/></svg></div>
-          
-          <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg shadow-sm text-xs font-bold text-gray-600 border border-gray-200">
-            Lat: 10.6412° N, Long: 122.2355° E
+          <div id="map">
+            <script>
+              var map = L.map('map').setView([10.6410, 122.2355], 13);
+              L.tileLayer('https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=pxJ2FnvFl8J48s3zwqMi',
+              {attribution:'<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'}).addTo(map);
+            </script>
           </div>
         </div>
       </div>
 
-      <div class="lg:w-5/12 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+      <!-- Incident Queue -->
+      <div class="lg:w-5/12 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden min-h-[300px]">
         <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <h2 class="font-bold text-gray-800 flex items-center gap-2">
             <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
@@ -141,9 +231,14 @@
           <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full">46 Total</span>
         </div>
 
-        <div class="flex-1 overflow-y-auto queue-scroll p-4 space-y-3">
-          
-          <div class="queue-item border border-red-200 bg-red-50/30 rounded-xl p-4 flex flex-col gap-3 transition">
+        <div class="flex-1 overflow-y-auto queue-scroll p-4 space-y-3" id="incidentQueue">
+
+          <!-- Item 1 — 3 photos -->
+          <div class="queue-item border border-red-200 bg-red-50/30 rounded-xl p-4 flex flex-col gap-3 transition"
+               data-report-id="1"
+               data-photos='["https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800","https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=800","https://images.unsplash.com/photo-1591951425328-48ead5748468?w=800"]'
+               data-title='"TABANG Stranded sa bubong- tubig lagpas kisame"'
+               data-location="Brgy. Mat-y, Miagao">
             <div class="flex justify-between items-start">
               <div>
                 <div class="flex items-center gap-2 mb-1">
@@ -153,16 +248,21 @@
                 <h3 class="font-bold text-gray-900 text-sm">"TABANG Stranded sa bubong- tubig lagpas kisame"</h3>
                 <p class="text-xs text-gray-500 mt-1">Parsed Loc: Brgy. Mat-y, Miagao | <span class="text-blue-600 font-semibold">0912-345-6789</span></p>
               </div>
-              <span class="text-[10px] text-gray-400 font-bold">2m ago</span>
+              <span class="text-[10px] text-gray-400 font-bold shrink-0 ml-2">2m ago</span>
             </div>
-            
-            <div class="flex items-center gap-3 mt-1">
+
+            <div class="flex items-center gap-2 mt-1 flex-wrap">
               <select onchange="updateStatus(this)" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-red-500 shadow-sm cursor-pointer w-32">
                 <option value="reported" selected>🚨 Reported</option>
                 <option value="dispatched">🚓 Dispatched</option>
                 <option value="resolved">✅ Resolved</option>
               </select>
-              
+
+              <button onclick="openPhotoModal(this.closest('.queue-item'))" class="photo-badge">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                3 Photos
+              </button>
+
               <button class="text-xs text-blue-600 font-bold hover:underline">View on Map</button>
 
               <button onclick="removeReport(this)" class="text-xs text-red-500 font-bold hover:text-red-700 transition flex items-center gap-1 ml-auto">
@@ -172,28 +272,36 @@
             </div>
           </div>
 
-          <div class="queue-item border border-yellow-200 bg-yellow-50/30 rounded-xl p-4 flex flex-col gap-3 transition">
+          <!-- Item 2 — 2 photos -->
+          <div class="queue-item border border-yellow-200 bg-yellow-50/30 rounded-xl p-4 flex flex-col gap-3 transition"
+               data-report-id="2"
+               data-photos='["https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?w=800","https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800"]'
+               data-title='"Tulay basi, delikado aagyan"'
+               data-location="Brgy. Igtumarom, Miagao">
             <div class="flex justify-between items-start">
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="bg-yellow-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Hazard</span>
-                  <span class="text-xs text-gray-500 font-semibold flex items-center gap-1"><svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg> Web App</span>
+                  <span class="bg-yellow-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Hazard Report</span>
+                  <span class="text-xs text-gray-500 font-semibold flex items-center gap-1"><svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"></path></svg> Web App</span>
                 </div>
-                <h3 class="font-bold text-gray-900 text-sm">"PAKID-An Wiring nautod sa poste"</h3>
-                <p class="text-xs text-gray-500 mt-1">Loc: Brgy. Mambatad, Miagao | Reporter: Juan D.</p>
+                <h3 class="font-bold text-gray-900 text-sm">"Tulay basi, delikado aagyan"</h3>
+                <p class="text-xs text-gray-500 mt-1">Parsed Loc: Brgy. Igtumarom, Miagao | <span class="text-blue-600 font-semibold">0917-890-1234</span></p>
               </div>
-              <span class="text-[10px] text-gray-400 font-bold">14m ago</span>
+              <span class="text-[10px] text-gray-400 font-bold shrink-0 ml-2">11m ago</span>
             </div>
-            
-            <div class="flex items-center gap-3 mt-1">
-              <select onchange="updateStatus(this)" class="bg-white border border-blue-300 text-blue-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer w-32">
-                <option value="reported">🚨 Reported</option>
-                <option value="dispatched" selected>🚓 Dispatched</option>
+            <div class="flex items-center gap-2 mt-1 flex-wrap">
+              <select onchange="updateStatus(this)" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-yellow-500 shadow-sm cursor-pointer w-32">
+                <option value="reported" selected>🚨 Reported</option>
+                <option value="dispatched">🚓 Dispatched</option>
                 <option value="resolved">✅ Resolved</option>
               </select>
-              
-              <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded font-bold">Unit Eng-04 Responding</span>
 
+              <button onclick="openPhotoModal(this.closest('.queue-item'))" class="photo-badge">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                2 Photos
+              </button>
+
+              <button class="text-xs text-blue-600 font-bold hover:underline">View on Map</button>
               <button onclick="removeReport(this)" class="text-xs text-red-500 font-bold hover:text-red-700 transition flex items-center gap-1 ml-auto">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 Remove
@@ -201,26 +309,74 @@
             </div>
           </div>
 
-          <div class="queue-item border border-gray-200 bg-gray-50 rounded-xl p-4 flex flex-col gap-3 opacity-60 hover:opacity-100 transition">
+          <!-- Item 3 — 1 photo -->
+          <div class="queue-item border border-red-200 bg-red-50/30 rounded-xl p-4 flex flex-col gap-3 transition"
+               data-report-id="3"
+               data-photos='["https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=800"]'
+               data-title='"Nalugi ang aming balay, rescue pls"'
+               data-location="Brgy. Alimodian, Miagao">
             <div class="flex justify-between items-start">
               <div>
                 <div class="flex items-center gap-2 mb-1">
-                  <span class="bg-gray-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Cleared</span>
-                  <span class="text-xs text-gray-500 font-semibold flex items-center gap-1"><svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg> SMS Gateway</span>
+                  <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">SOS Request</span>
+                  <span class="text-xs text-gray-500 font-semibold flex items-center gap-1"><svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"></path></svg> Web App</span>
                 </div>
-                <h3 class="font-bold text-gray-600 text-sm line-through">"Fallen tree blocking highway"</h3>
-                <p class="text-xs text-gray-400 mt-1">Loc: Poblacion, Miagao</p>
+                <h3 class="font-bold text-gray-900 text-sm">"Nalugi ang aming balay, rescue pls"</h3>
+                <p class="text-xs text-gray-500 mt-1">Parsed Loc: Brgy. Alimodian, Miagao | <span class="text-blue-600 font-semibold">0918-222-3344</span></p>
               </div>
-              <span class="text-[10px] text-gray-400 font-bold">2h ago</span>
+              <span class="text-[10px] text-gray-400 font-bold shrink-0 ml-2">25m ago</span>
             </div>
-            
-            <div class="flex items-center gap-3 mt-1">
-              <select onchange="updateStatus(this)" class="bg-gray-100 border border-gray-200 text-gray-600 text-xs font-bold rounded-lg px-2 py-1.5 cursor-pointer w-32">
-                <option value="reported">🚨 Reported</option>
+            <div class="flex items-center gap-2 mt-1 flex-wrap">
+              <select onchange="updateStatus(this)" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-red-500 shadow-sm cursor-pointer w-32">
+                <option value="reported" selected>🚨 Reported</option>
                 <option value="dispatched">🚓 Dispatched</option>
-                <option value="resolved" selected>✅ Resolved</option>
+                <option value="resolved">✅ Resolved</option>
               </select>
 
+              <button onclick="openPhotoModal(this.closest('.queue-item'))" class="photo-badge">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                1 Photo
+              </button>
+
+              <button class="text-xs text-blue-600 font-bold hover:underline">View on Map</button>
+              <button onclick="removeReport(this)" class="text-xs text-red-500 font-bold hover:text-red-700 transition flex items-center gap-1 ml-auto">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                Remove
+              </button>
+            </div>
+          </div>
+
+          <!-- Item 4 — no photos (SMS, no attachment) -->
+          <div class="queue-item border border-gray-200 bg-gray-50/30 rounded-xl p-4 flex flex-col gap-3 transition"
+               data-report-id="4"
+               data-photos='[]'
+               data-title='"Pamilya 5 naka-stranded sa Purok 3"'
+               data-location="Brgy. Baybay, Miagao">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">SOS Request</span>
+                  <span class="text-xs text-gray-500 font-semibold flex items-center gap-1"><svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg> SMS Gateway</span>
+                </div>
+                <h3 class="font-bold text-gray-900 text-sm">"Pamilya 5 naka-stranded sa Purok 3"</h3>
+                <p class="text-xs text-gray-500 mt-1">Parsed Loc: Brgy. Baybay, Miagao | <span class="text-blue-600 font-semibold">0921-555-7788</span></p>
+              </div>
+              <span class="text-[10px] text-gray-400 font-bold shrink-0 ml-2">38m ago</span>
+            </div>
+            <div class="flex items-center gap-2 mt-1 flex-wrap">
+              <select onchange="updateStatus(this)" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-red-500 shadow-sm cursor-pointer w-32">
+                <option value="reported" selected>🚨 Reported</option>
+                <option value="dispatched">🚓 Dispatched</option>
+                <option value="resolved">✅ Resolved</option>
+              </select>
+
+              <!-- No photos badge (disabled) -->
+              <span class="photo-badge no-img">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                No Photos
+              </span>
+
+              <button class="text-xs text-blue-600 font-bold hover:underline">View on Map</button>
               <button onclick="removeReport(this)" class="text-xs text-red-500 font-bold hover:text-red-700 transition flex items-center gap-1 ml-auto">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 Remove
@@ -233,42 +389,67 @@
     </div>
   </div>
 
+  <!-- Toast -->
   <div id="toast" class="fixed bottom-6 right-6 bg-[#3B5B47] text-[#95D3A2] px-6 py-3 rounded-xl shadow-2xl font-bold flex items-center gap-3 transform translate-y-20 opacity-0 transition duration-300 z-50">
     <svg id="toastIcon" class="w-5 h-5 text-[#95D3A2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
     <span id="toastMsg">Status Updated</span>
   </div>
 
+  <!-- ===== IMAGE MODAL ===== -->
+  <div id="imageModal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-start p-4 border-b border-gray-100 bg-gray-50 rounded-t-2xl">
+        <div class="min-w-0 pr-2">
+          <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Report Photos</p>
+          <h3 id="modalTitle" class="font-bold text-gray-900 text-sm leading-snug truncate max-w-xs"></h3>
+          <p id="modalLocation" class="text-xs text-gray-500 mt-0.5"></p>
+        </div>
+        <button onclick="closePhotoModal()" class="w-8 h-8 rounded-lg hover:bg-gray-200 flex items-center justify-center transition shrink-0 text-gray-500">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Photo Grid -->
+      <div id="photoGrid" class="photo-grid"></div>
+
+      <!-- Modal Footer -->
+      <div class="px-4 py-3 bg-gray-50 border-t border-gray-100 rounded-b-2xl flex items-center justify-between">
+        <span id="photoCount" class="text-xs text-gray-400 font-semibold"></span>
+        <button onclick="closePhotoModal()" class="bg-[#3B5B47] text-[#95D3A2] text-xs font-bold px-4 py-2 rounded-lg hover:bg-[#2f4a3a] transition">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LIGHTBOX (full-screen single image) ===== -->
+  <div id="lightbox">
+    <span id="lightboxClose" onclick="closeLightbox()" title="Close">&times;</span>
+    <img id="lightboxImg" src="" alt="Full-size report photo">
+  </div>
+
   <script>
+    /* ── Toast ── */
     function showToast(message, isDelete = false) {
       const toast = document.getElementById('toast');
       const toastMsg = document.getElementById('toastMsg');
       const toastIcon = document.getElementById('toastIcon');
-
       toastMsg.innerText = message;
-
-      if(isDelete) {
+      if (isDelete) {
         toast.className = "fixed bottom-6 right-6 bg-red-600 text-white px-6 py-3 rounded-xl shadow-2xl font-bold flex items-center gap-3 transform transition duration-300 z-50";
-        toastIcon.className = "w-5 h-5 text-white";
         toastIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>`;
       } else {
         toast.className = "fixed bottom-6 right-6 bg-[#3B5B47] text-[#95D3A2] px-6 py-3 rounded-xl shadow-2xl font-bold flex items-center gap-3 transform transition duration-300 z-50";
-        toastIcon.className = "w-5 h-5 text-[#95D3A2]";
         toastIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>`;
       }
-
       toast.classList.remove('translate-y-20', 'opacity-0');
-      
-      // Hide after 3 seconds
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
+      setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
     }
 
+    /* ── Status ── */
     function updateStatus(selectElement) {
       const statusValue = selectElement.value;
       let msg = "";
-      
-      if(statusValue === 'resolved') {
+      if (statusValue === 'resolved') {
         selectElement.className = "bg-gray-100 border border-gray-200 text-gray-600 text-xs font-bold rounded-lg px-2 py-1.5 cursor-pointer w-32";
         msg = "Report marked as RESOLVED. Archiving...";
       } else if (statusValue === 'dispatched') {
@@ -278,24 +459,99 @@
         selectElement.className = "bg-white border border-red-300 text-red-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-red-500 shadow-sm cursor-pointer w-32";
         msg = "Status reverted to REPORTED.";
       }
-
       showToast(msg, false);
     }
 
+    /* ── Remove ── */
     function removeReport(btnElement) {
-      // Find the parent queue item and remove it
       const queueItem = btnElement.closest('.queue-item');
-      
-      // Add a small fade-out effect before deleting
       queueItem.style.opacity = '0';
       queueItem.style.transform = 'scale(0.95)';
-      
+      queueItem.style.transition = 'all 0.2s';
       setTimeout(() => {
         queueItem.remove();
         showToast("Report permanently removed from queue.", true);
       }, 200);
     }
+
+    /* ── Photo Modal ── */
+    function openPhotoModal(queueItem) {
+      const photos = JSON.parse(queueItem.dataset.photos || '[]');
+      const title  = queueItem.dataset.title   || 'Incident Report';
+      const loc    = queueItem.dataset.location || '';
+
+      document.getElementById('modalTitle').textContent    = title;
+      document.getElementById('modalLocation').textContent = '📍 ' + loc;
+      document.getElementById('photoCount').textContent    = photos.length
+        ? `${photos.length} photo${photos.length > 1 ? 's' : ''} attached`
+        : 'No photos attached';
+
+      const grid = document.getElementById('photoGrid');
+      grid.innerHTML = '';
+
+      if (!photos.length) {
+        grid.innerHTML = `
+          <div class="no-photos">
+            <svg class="w-12 h-12 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            <p class="text-sm font-semibold">No photos were attached to this report.</p>
+          </div>`;
+      } else {
+        const n = Math.min(photos.length, 4);
+        grid.className = `photo-grid count-${n}`;
+        photos.slice(0, 4).forEach((url, i) => {
+          const item = document.createElement('div');
+          item.className = 'photo-item';
+          item.title = 'Click to enlarge';
+          item.onclick = () => openLightbox(url);
+          item.innerHTML = `
+            <img src="${url}" alt="Report photo ${i + 1}" loading="lazy">
+            <div class="photo-overlay">
+              <svg class="w-8 h-8 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+            </div>`;
+          grid.appendChild(item);
+        });
+      }
+
+      document.getElementById('imageModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePhotoModal() {
+      document.getElementById('imageModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Close on backdrop click
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+      if (e.target === this) closePhotoModal();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closePhotoModal();
+      }
+    });
+
+    /* ── Lightbox ── */
+    function openLightbox(url) {
+      document.getElementById('lightboxImg').src = url;
+      document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.getElementById('lightboxImg').src = '';
+    }
+
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+      if (e.target === this) closeLightbox();
+    });
   </script>
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+ 
 </body>
 </html>
