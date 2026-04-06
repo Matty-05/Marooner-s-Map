@@ -22,10 +22,10 @@
     }
   </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800 h-screen w-screen flex overflow-hidden m-0 p-0">
+<body class="bg-gray-100 font-sans text-gray-800 min-h-screen md:h-screen w-full flex flex-col md:flex-row overflow-x-hidden md:overflow-hidden m-0 p-0">
 
-  <div class="hidden md:flex w-24 bg-brand-dark flex-col items-center py-6 justify-between rounded-r-3xl z-20 shadow-2xl h-full flex-shrink-0">
-    <div class="space-y-8 flex flex-col items-center w-full">
+  <div class="flex flex-row md:flex-col w-full md:w-24 h-16 md:h-full bg-brand-dark items-center px-4 md:px-0 py-0 md:py-6 justify-between md:rounded-r-3xl z-20 shadow-md md:shadow-2xl flex-shrink-0">
+    <div class="flex flex-row md:flex-col space-x-4 md:space-x-0 md:space-y-8 items-center">
       <a href="dashboard.html" class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center shadow-lg mb-2 transition transform hover:scale-105">
         <svg class="w-8 h-8 text-[#3B5B47]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
       </a>
@@ -43,12 +43,11 @@
       </a>
     </div>
     
-    <a href="profile.html" class="w-10 h-10 bg-brand-light rounded-full flex items-center justify-center shadow-md cursor-pointer mt-auto text-brand-dark font-bold text-sm hover:scale-105 transition">
-      JD
+    <a href="profile.html" class="w-10 h-10 bg-brand-light rounded-full flex items-center justify-center shadow-md cursor-pointer md:mt-auto text-brand-dark font-bold text-sm hover:scale-105 transition">
     </a>
   </div>
 
-  <div class="flex-1 flex flex-col h-full w-full p-6 md:p-8 overflow-y-auto relative">
+  <div class="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto md:overflow-hidden relative">
     
     <div class="flex justify-between items-start mb-6">
       <div>
