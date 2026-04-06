@@ -561,7 +561,23 @@
       lb.style.opacity = '0';
       setTimeout(() => { lb.style.opacity = '1'; }, 10);
     }
+      // Prepare media for upload
+      const mediaFiles = window._selectedFiles || []; 
+      const attachments = mediaFiles.map(file => ({
+        name: file.name,
+        type: file.type, // e.g., 'image/jpeg' or 'video/mp4'
+        file: file // The actual file object for your upload logic
+      }));
 
+      // When uploading (e.g., to Firebase Storage), save the URL and the type
+      // so you know how to render it later.
+      const reportData = {
+        title,
+        location,
+        description,
+        incidentType: selectedType,
+        media: [] // This should be populated with {url, type} after upload
+      };
     function closeLightbox() {
       const lb = document.getElementById('lightbox');
       lb.style.opacity = '0';
