@@ -348,55 +348,52 @@
     const locName = parts[1].trim();                
     const descText = parts[2].trim();               
 
-    // --- PROVINCE-LEVEL COORDINATE LOGIC ---
-    let lat = 12.8797; // Center of Philippines
-    let lng = 121.7740;
-    let zoomLevel = 13; // Default zoom
-
-    const locationLower = locName.toLowerCase();
-
-    if (locationLower.includes("iloilo")) {
-        lat = 10.7202; lng = 122.5621;
-    } else if (locationLower.includes("antique")) {
-        lat = 11.2000; lng = 122.1000;
-    } else if (locationLower.includes("capiz")) {
-        lat = 11.4167; lng = 122.7500;
-    } else if (locationLower.includes("aklan")) {
-        lat = 11.6667; lng = 122.3333;
-    } else if (locationLower.includes("cebu")) {
-        lat = 10.3157; lng = 123.8854;
-    } else if (locationLower.includes("manila")) {
-        lat = 14.5995; lng = 120.9842;
-    } else {
-        // If it's a place we don't know, put it in the general area of the PH
-        lat = 11.0 + (Math.random() * 2); 
-        lng = 122.0 + (Math.random() * 2);
-    }
-
-    const newReport = {
-      type: (keyword === "TABANG") ? "EMERGENCY" : "INFRASTRUCTURE",
-      location: locName,
-      description: descText,
-      status: "reported",
-      source: "SMS",
-      lat: lat,
-      lng: lng,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    };
+    const MAPTILER_KEY = 'pxJ2FnvFl8J48s3zwqMi'; 
+    
+    // PRECISION UPDATE:
+    // 1. We remove proximity to avoid "pulling" the result toward Miagao.
+    // 2. We keep country=ph to stay in the Philippines.
+    // 3. We use 'autocomplete=false' to force it to look for exact matches.
+    const geocodeUrl = `https://api.maptiler.com/geocoding/${encodeURIComponent(locName)}.json?key=${MAPTILER_KEY}&country=ph&autocomplete=false`;
 
     try {
-      await db.collection("incidents").add(newReport);
-      
-      // OPTIONAL: Make the map fly to the new location so the judges see it move!
-      map.flyTo([lat, lng], 10); 
-      
-      document.getElementById('sim-sms-body').value = "";
-      alert(`SMS Processed for ${locName}!`);
+        const response = await fetch(geocodeUrl);
+        const data = await response.json();
+
+        if (data.features && data.features.length > 0) {
+            // Find the best match (usually the first one)
+            const bestMatch = data.features[0];
+            const lng = bestMatch.center[0];
+            const lat = bestMatch.center[1];
+            
+            console.log("Found:", bestMatch.place_name); // Check your console!
+
+            // SAVE TO FIREBASE
+            const newReport = {
+                type: (keyword === "TABANG") ? "EMERGENCY" : "INFRASTRUCTURE",
+                location: bestMatch.place_name, // Save the FULL name found by API
+                description: descText,
+                status: "reported",
+                source: "SMS",
+                lat: lat,
+                lng: lng,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            await db.collection("incidents").add(newReport);
+            
+            // Move Map
+            map.flyTo([lat, lng], 12); 
+            
+            document.getElementById('sim-sms-body').value = "";
+            showToast(`Pinned: ${bestMatch.place_name}`); // Uses your existing toast function
+        } else {
+            alert("Location not found in the Philippines.");
+        }
     } catch (error) {
-      console.error("Error:", error);
+        console.error("Geocoding Error:", error);
     }
 };
-
   // 3. The Live Listener (Watch for new reports and drop pins)
   db.collection("incidents").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
