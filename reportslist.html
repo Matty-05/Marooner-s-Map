@@ -58,7 +58,6 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 min-h-screen md:h-screen w-full flex flex-col md:flex-row overflow-x-hidden md:overflow-hidden m-0 p-0">
 
-  <!-- Sidebar -->
   <div class="flex flex-row md:flex-col w-full md:w-24 h-16 md:h-full bg-brand-dark items-center px-4 md:px-0 py-0 md:py-6 justify-between md:rounded-r-3xl z-20 shadow-md md:shadow-2xl flex-shrink-0">
     <div class="flex flex-row md:flex-col space-x-4 md:space-x-0 md:space-y-8 items-center">
       <a href="dashboard.html" class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center shadow-lg mb-2 transition transform hover:scale-105">
@@ -77,7 +76,6 @@
     <a href="profile.html" class="w-10 h-10 md:w-14 md:h-14 bg-brand-light rounded-full flex items-center justify-center shadow-lg md:mb-2 transition transform hover:scale-105"></a>
   </div>
 
-  <!-- Main Content -->
   <div class="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto md:overflow-hidden relative">
     
     <div class="flex justify-between items-start mb-6">
@@ -96,7 +94,6 @@
 
       <div id="contentMyReports" class="flex-1 overflow-y-auto p-6 space-y-4">
 
-        <!-- Guest notice (shown when not logged in) -->
         <div id="guestNotice" class="hidden flex flex-col items-center justify-center py-16 text-center">
           <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -109,7 +106,6 @@
           </a>
         </div>
 
-        <!-- My reports empty state (logged in but no reports) -->
         <div id="myReportsEmpty" class="hidden flex flex-col items-center justify-center py-16 text-center">
           <div class="w-16 h-16 bg-[#f0faf2] rounded-full flex items-center justify-center mb-4 text-[#3B5B47]">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -124,7 +120,6 @@
 
       <div id="contentCommunity" class="hidden flex-1 overflow-y-auto p-6 space-y-4">
 
-        <!-- Community empty state -->
         <div id="communityEmpty" class="hidden flex flex-col items-center justify-center py-16 text-center">
           <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-300">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -139,69 +134,57 @@
 
     </div>
   </div>
-    </div>
-  </div>
 
-  <!-- ===================== NEW REPORT MODAL ===================== -->
   <div id="reportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" style="background: rgba(0,0,0,0.5);">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
       
-      <!-- Modal Header -->
       <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
         <div>
           <h2 class="text-xl font-bold text-gray-900">New Incident Report</h2>
           <p class="text-xs text-gray-400 mt-0.5">Fill in the details and attach any supporting files.</p>
         </div>
-        <button id="closeModalBtn" onclick="closeModal()" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition">
+        <button id="closeModalBtn" class="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
 
-      <!-- Modal Body -->
       <div class="px-6 py-5 space-y-5">
-
-        <!-- Incident Type -->
         <div>
           <label class="block text-sm font-bold text-gray-700 mb-2">Incident Type</label>
-          <div class="grid grid-cols-2 gap-2" id="incidentTypeGroup">
+          <div class="grid grid-cols-3 gap-2" id="incidentTypeGroup">
             <button type="button" data-type="SOS Request" class="type-btn border-2 border-gray-200 rounded-xl py-2.5 px-3 text-xs font-bold text-gray-600 hover:border-red-400 hover:bg-red-50 hover:text-red-600 transition text-center">
               🆘 SOS Request
             </button>
             <button type="button" data-type="Hazard" class="type-btn border-2 border-gray-200 rounded-xl py-2.5 px-3 text-xs font-bold text-gray-600 hover:border-yellow-400 hover:bg-yellow-50 hover:text-yellow-600 transition text-center">
               ⚠️ Hazard
             </button>
+            <button type="button" data-type="Info" class="type-btn border-2 border-gray-200 rounded-xl py-2.5 px-3 text-xs font-bold text-gray-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600 transition text-center">
+              ℹ️ Info
+            </button>
           </div>
           <input type="hidden" id="selectedType" value="">
         </div>
 
-        <!-- Title -->
         <div>
           <label class="block text-sm font-bold text-gray-700 mb-2">Report Title</label>
           <input type="text" id="reportTitle" placeholder="Brief description of the incident…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#3B5B47] transition placeholder-gray-400">
         </div>
 
-        <!-- Location -->
         <div>
           <label class="block text-sm font-bold text-gray-700 mb-2">Location</label>
           <input type="text" id="reportLocation" placeholder="e.g. Brgy. Mat-y, Miagao, Iloilo" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#3B5B47] transition placeholder-gray-400">
         </div>
 
-        <!-- Description -->
         <div>
           <label class="block text-sm font-bold text-gray-700 mb-2">Description <span class="font-normal text-gray-400">(optional)</span></label>
           <textarea id="reportDescription" rows="3" placeholder="Provide more context about the incident…" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#3B5B47] transition placeholder-gray-400 resize-none"></textarea>
         </div>
 
-        <!-- File Attachment -->
         <div>
           <label class="block text-sm font-bold text-gray-700 mb-2">
             Attachments <span class="font-normal text-gray-400">(photos, videos, documents)</span>
           </label>
-
-          <!-- Drop Zone -->
-          <div id="dropZone"
-            class="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#3B5B47] hover:bg-gray-50 transition text-center"
-            onclick="document.getElementById('fileInput').click()">
+          <div id="dropZone" class="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#3B5B47] hover:bg-gray-50 transition text-center" onclick="document.getElementById('fileInput').click()">
             <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
             </div>
@@ -209,17 +192,12 @@
             <p class="text-xs text-gray-400">PNG, JPG, PDF, MP4 up to 20MB each</p>
             <input id="fileInput" type="file" class="hidden" multiple accept="image/*,video/*,.pdf,.doc,.docx">
           </div>
-
-          <!-- File Preview List -->
           <div id="filePreviewList" class="mt-3 space-y-2 hidden"></div>
         </div>
 
-        <!-- Error message -->
         <p id="formError" class="hidden text-xs text-red-500 font-medium">Please fill in all required fields and select an incident type.</p>
-
       </div>
 
-      <!-- Modal Footer -->
       <div class="px-6 pb-6 flex gap-3 justify-end">
         <button id="cancelModalBtn" class="px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition">Cancel</button>
         <button id="submitReportBtn" class="px-6 py-2.5 rounded-xl bg-[#3B5B47] hover:bg-[#2d4a3e] text-white text-sm font-bold transition shadow-sm flex items-center gap-2">
@@ -230,14 +208,11 @@
     </div>
   </div>
 
-  <!-- ===================== REPORT DETAIL DRAWER ===================== -->
   <div id="detailBackdrop" class="fixed inset-0 z-[60] hidden" style="background:rgba(0,0,0,0.45);" onclick="closeDetail()"></div>
   <div id="detailDrawer" class="fixed right-0 top-0 h-full w-full max-w-md bg-white z-[70] shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
-    
-    <!-- Drawer Header -->
     <div id="detailHeader" class="px-6 pt-6 pb-4 border-b border-gray-100 flex items-start justify-between gap-3 flex-shrink-0">
       <div class="flex items-center gap-3 min-w-0">
-        <div id="detailIconWrap" class="p-3 rounded-xl flex-shrink-0"><!-- icon injected --></div>
+        <div id="detailIconWrap" class="p-3 rounded-xl flex-shrink-0"></div>
         <div class="min-w-0">
           <div class="flex items-center gap-2 flex-wrap mb-0.5">
             <span id="detailTypeBadge" class="text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide text-white"></span>
@@ -251,16 +226,12 @@
       </button>
     </div>
 
-    <!-- Drawer Body -->
     <div class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
-
-      <!-- Description -->
       <div id="detailDescWrap">
         <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Description</p>
         <p id="detailDesc" class="text-sm text-gray-700 leading-relaxed"></p>
       </div>
 
-      <!-- Meta row -->
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-2 text-sm text-gray-500">
           <svg class="w-4 h-4 flex-shrink-0 text-[#3B5B47]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -276,16 +247,21 @@
         </div>
       </div>
 
-      <!-- Media section -->
       <div id="detailMediaWrap" class="hidden">
         <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Attachments</p>
         <div id="detailMediaGrid" class="grid grid-cols-2 gap-3"></div>
+      </div>
+      
+      <div id="detailActionWrap" class="hidden pt-4 mt-4 border-t border-gray-100">
+        <button id="detailDeleteBtn" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-50 text-red-600 font-bold text-sm border border-red-100 hover:bg-red-100 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          Delete Report
+        </button>
       </div>
 
     </div>
   </div>
 
-  <!-- ===================== IMAGE LIGHTBOX ===================== -->
   <div id="lightbox" class="fixed inset-0 z-[100] flex items-center justify-center hidden" style="background: rgba(0,0,0,0.85);" onclick="closeLightbox()">
     <button class="absolute top-4 right-4 text-white/70 hover:text-white bg-white/10 rounded-full w-10 h-10 flex items-center justify-center transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -294,11 +270,10 @@
   </div>
 
   <script>
-    // ─── State ───────────────────────────────────────────────
-    let selectedFiles = []; // { file, dataUrl, name, isImage, isVideo }
+    // ─── UI Script logic (Modals, Dropzones, File previews) ───
+    let selectedFiles = []; 
     let selectedType = '';
 
-    // ─── Modal open/close ────────────────────────────────────
     const modal = document.getElementById('reportModal');
     document.getElementById('openModalBtn').addEventListener('click', openModal);
     document.getElementById('closeModalBtn').addEventListener('click', closeModal);
@@ -310,22 +285,6 @@
       modal.classList.remove('hidden');
       modal.style.opacity = '0';
       setTimeout(() => { modal.style.opacity = '1'; }, 10);
-    }
-    function renderMedia(mediaArray) {
-      if (!mediaArray || mediaArray.length === 0) return '';
-
-      return mediaArray.map(item => {
-        if (item.type.startsWith('image/')) {
-          return `<img src="${item.url}" class="attachment-img" onclick="openLightbox('${item.url}')" alt="Report image">`;
-        } else if (item.type.startsWith('video/')) {
-          return `
-            <video class="attachment-img" controls>
-              <source src="${item.url}" type="${item.type}">
-              Your browser does not support the video tag.
-            </video>`;
-        }
-        return '';
-      }).join('');
     }
 
     function closeModal() {
@@ -350,7 +309,6 @@
       document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-1', '!border-[#3B5B47]', '!bg-[#f0faf2]', '!text-[#3B5B47]'));
     }
 
-    // ─── Incident type selection ─────────────────────────────
     document.querySelectorAll('.type-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.type-btn').forEach(b => {
@@ -361,7 +319,6 @@
       });
     });
 
-    // ─── File input & drag-drop ──────────────────────────────
     const fileInput = document.getElementById('fileInput');
     const dropZone = document.getElementById('dropZone');
 
@@ -382,7 +339,7 @@
         const reader = new FileReader();
         reader.onload = (e) => {
           selectedFiles.push({ file, dataUrl: e.target.result, name: file.name, isImage, isVideo });
-          window._selectedFiles = selectedFiles.map(f => f.file); // expose raw File objects
+          window._selectedFiles = selectedFiles.map(f => f.file); 
           renderFilePreviews();
         };
         reader.readAsDataURL(file);
@@ -398,7 +355,6 @@
         const chip = document.createElement('div');
         chip.className = 'file-chip flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2';
 
-        // Thumbnail or icon
         if (f.isImage) {
           const img = document.createElement('img');
           img.src = f.dataUrl;
@@ -432,14 +388,10 @@
           renderFilePreviews();
         });
         chip.appendChild(removeBtn);
-
         list.appendChild(chip);
       });
     }
 
-
-
-    // ─── Lightbox ────────────────────────────────────────────
     function openLightbox(src, alt) {
       document.getElementById('lightboxImg').src = src;
       document.getElementById('lightboxImg').alt = alt;
@@ -455,418 +407,413 @@
       setTimeout(() => lb.classList.add('hidden'), 200);
     }
 
-    // ─── Tabs ────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-      const tabMyReports = document.getElementById('tabMyReports');
-      const tabCommunity = document.getElementById('tabCommunity');
-      const contentMyReports = document.getElementById('contentMyReports');
-      const contentCommunity = document.getElementById('contentCommunity');
-
-      tabMyReports.addEventListener('click', () => {
-        contentMyReports.classList.remove('hidden');
-        contentCommunity.classList.add('hidden');
-        tabMyReports.classList.add('border-[#3B5B47]', 'text-[#3B5B47]');
-        tabMyReports.classList.remove('border-transparent', 'text-gray-400');
-        tabCommunity.classList.remove('border-[#3B5B47]', 'text-[#3B5B47]');
-        tabCommunity.classList.add('border-transparent', 'text-gray-400');
-      });
-
-      tabCommunity.addEventListener('click', () => {
-        contentCommunity.classList.remove('hidden');
-        contentMyReports.classList.add('hidden');
-        tabCommunity.classList.add('border-[#3B5B47]', 'text-[#3B5B47]');
-        tabCommunity.classList.remove('border-transparent', 'text-gray-400');
-        tabMyReports.classList.remove('border-[#3B5B47]', 'text-[#3B5B47]');
-        tabMyReports.classList.add('border-transparent', 'text-gray-400');
-      });
-    });
-
-    // ─── Helpers ─────────────────────────────────────────────
-    function escapeHtml(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
-    }
-  </script>
-
-  <script>
     document.addEventListener('DOMContentLoaded', () => {
       const savedName = localStorage.getItem("userLoggedIn") || "Guest User";
-
-      // Update the Profile Circle (JD -> initials)
       const profileCircle = document.querySelector('a[href="profile.html"]');
       if (profileCircle && savedName !== "Guest User") {
         const initials = savedName.split(' ').map(n => n[0]).join('').toUpperCase();
         profileCircle.textContent = initials.substring(0, 2);
       }
     });
+
   </script>
 
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, addDoc, serverTimestamp, doc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDCMWPvDEKEGWYiyL8ozobe778o1ZbudHY",
-    authDomain: "marooner-s-map-9bd81.firebaseapp.com",
-    projectId: "marooner-s-map-9bd81",
-    storageBucket: "marooner-s-map-9bd81.firebasestorage.app",
-    messagingSenderId: "630717954342",
-    appId: "1:630717954342:web:d83fcde58c2a7efd8129e7",
-    measurementId: "G-DWJKH47FPM"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCMWPvDEKEGWYiyL8ozobe778o1ZbudHY",
+      authDomain: "marooner-s-map-9bd81.firebaseapp.com",
+      projectId: "marooner-s-map-9bd81",
+      storageBucket: "marooner-s-map-9bd81.firebasestorage.app",
+      messagingSenderId: "630717954342",
+      appId: "1:630717954342:web:d83fcde58c2a7efd8129e7",
+      measurementId: "G-DWJKH47FPM"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
-  const storage = getStorage(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
 
-  // ─── Report data store (for the detail drawer) ────────────────────────────
-  const reportStore = {}; // docId → { data, placeName }
+    const reportStore = {}; 
 
-  // ─── TAB SWITCHING LOGIC ──────────────────────────────────────────────────
-  const tabMyReports = document.getElementById('tabMyReports');
-  const tabCommunity = document.getElementById('tabCommunity');
-  const contentMyReports = document.getElementById('contentMyReports');
-  const contentCommunity = document.getElementById('contentCommunity');
+    // ─── TAB SWITCHING LOGIC ───
+    const tabMyReports = document.getElementById('tabMyReports');
+    const tabCommunity = document.getElementById('tabCommunity');
+    const contentMyReports = document.getElementById('contentMyReports');
+    const contentCommunity = document.getElementById('contentCommunity');
 
-  tabMyReports.addEventListener('click', () => {
-    tabMyReports.className = "px-6 py-3 font-bold text-sm border-b-2 border-[#3B5B47] text-[#3B5B47] transition";
-    tabCommunity.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition";
-    contentMyReports.classList.remove('hidden');
-    contentCommunity.classList.add('hidden');
-  });
+    tabMyReports.addEventListener('click', () => {
+      tabMyReports.className = "px-6 py-3 font-bold text-sm border-b-2 border-[#3B5B47] text-[#3B5B47] transition";
+      tabCommunity.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition";
+      contentMyReports.classList.remove('hidden');
+      contentCommunity.classList.add('hidden');
+    });
 
-  tabCommunity.addEventListener('click', () => {
-    tabCommunity.className = "px-6 py-3 font-bold text-sm border-b-2 border-[#3B5B47] text-[#3B5B47] transition";
-    tabMyReports.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition";
-    contentCommunity.classList.remove('hidden');
-    contentMyReports.classList.add('hidden');
-  });
+    tabCommunity.addEventListener('click', () => {
+      tabCommunity.className = "px-6 py-3 font-bold text-sm border-b-2 border-[#3B5B47] text-[#3B5B47] transition";
+      tabMyReports.className = "px-6 py-3 font-semibold text-sm border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition";
+      contentCommunity.classList.remove('hidden');
+      contentMyReports.classList.add('hidden');
+    });
 
-  // ─── REVERSE GEOCODING (Cached) ───────────────────────────────────────────
-  let locationCache = JSON.parse(localStorage.getItem('maroonerMapCache')) || {};
+    // ─── REVERSE GEOCODING ───
+    let locationCache = JSON.parse(localStorage.getItem('maroonerMapCache')) || {};
 
-  async function getPlaceName(lat, lng) {
-    const cacheKey = `${parseFloat(lat).toFixed(4)},${parseFloat(lng).toFixed(4)}`;
-    if (locationCache[cacheKey]) return locationCache[cacheKey];
-    try {
-      await new Promise(resolve => setTimeout(resolve, Math.random() * 800));
-      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-      if (!res.ok) return `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
-      const data = await res.json();
-      let placeName = "Unknown Location";
-      if (data && data.address) {
-        const a = data.address;
-        const parts = [a.neighbourhood || a.village || a.hamlet || a.suburb || a.road || "",
-                       a.city || a.municipality || a.town || "",
-                       a.county || a.state || ""].filter(p => p.trim());
-        placeName = parts.length ? parts.join(", ") : (data.display_name || "").split(",").slice(0,3).join(",").trim();
-      }
-      locationCache[cacheKey] = placeName || `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
-      localStorage.setItem('maroonerMapCache', JSON.stringify(locationCache));
-      return locationCache[cacheKey];
-    } catch { return `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`; }
-  }
-
-  // ─── DETAIL DRAWER ────────────────────────────────────────────────────────
-  window.openDetail = function(docId) {
-    const entry = reportStore[docId];
-    if (!entry) return;
-    const { data, placeName } = entry;
-
-    const type   = data.type || data.incidentType || "Info";
-    const title  = data.title || "Untitled Report";
-    const desc   = data.description || "";
-    const status = data.status || "Reported";
-    const by     = data.reportedBy || data.reporterEmail || "Unknown";
-    const media  = data.mediaUrls || [];
-
-    // Colour palette
-    let iconSvg = "", typeColor = "", bgLight = "", textDark = "";
-    if (type.includes("SOS") || type.toLowerCase().includes("emergency")) {
-      typeColor = "bg-red-500"; bgLight = "bg-red-100"; textDark = "text-red-600";
-      iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-    } else if (type === "Hazard" || type.toLowerCase().includes("warning")) {
-      typeColor = "bg-yellow-500"; bgLight = "bg-yellow-100"; textDark = "text-yellow-600";
-      iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
-    } else {
-      typeColor = "bg-[#3B5B47]"; bgLight = "bg-[#f0faf2]"; textDark = "text-[#3B5B47]";
-      iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
-    }
-
-    // Status badge colours
-    let statusClass = "bg-gray-100 text-gray-500 border-gray-200";
-    if (status === "Reported") statusClass = "bg-blue-50 text-blue-600 border-blue-200";
-    else if (status === "In Progress") statusClass = "bg-yellow-50 text-yellow-700 border-yellow-200";
-    else if (status === "Resolved" || status === "Cleared by LGU") statusClass = "bg-green-50 text-green-700 border-green-200";
-
-    // Timestamp
-    let timeString = "Recently";
-    const td = data.createdAt || data.timestamp;
-    if (td) {
-      const d = td.toDate ? td.toDate() : new Date(td);
-      timeString = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) + " · " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }
-
-    // Inject into drawer
-    document.getElementById('detailIconWrap').className = `p-3 rounded-xl flex-shrink-0 ${bgLight} ${textDark}`;
-    document.getElementById('detailIconWrap').innerHTML = iconSvg;
-    document.getElementById('detailTypeBadge').className = `text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide text-white ${typeColor}`;
-    document.getElementById('detailTypeBadge').textContent = type;
-    document.getElementById('detailStatusBadge').className = `text-[10px] font-bold px-2 py-0.5 rounded-full border ${statusClass}`;
-    document.getElementById('detailStatusBadge').textContent = status;
-    document.getElementById('detailTitle').textContent = title;
-    document.getElementById('detailDesc').textContent = desc || "No description provided.";
-    document.getElementById('detailDescWrap').classList.toggle('hidden', !desc);
-    document.getElementById('detailLocation').textContent = placeName || "Locating…";
-    document.getElementById('detailTime').textContent = timeString;
-    document.getElementById('detailReporter').textContent = `Reported by ${by}`;
-
-    // Media
-    const mediaWrap = document.getElementById('detailMediaWrap');
-    const mediaGrid = document.getElementById('detailMediaGrid');
-    mediaGrid.innerHTML = '';
-    if (media.length > 0) {
-      mediaWrap.classList.remove('hidden');
-      media.forEach(m => {
-        if (m.type && m.type.startsWith('image/')) {
-          const img = document.createElement('img');
-          img.src = m.url;
-          img.alt = m.name || 'photo';
-          img.className = "w-full h-36 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-[#95D3A2] transition";
-          img.onclick = () => openLightbox(m.url, m.name);
-          mediaGrid.appendChild(img);
-        } else if (m.type && m.type.startsWith('video/')) {
-          const vid = document.createElement('video');
-          vid.src = m.url;
-          vid.controls = true;
-          vid.className = "w-full h-36 object-cover rounded-xl border border-gray-200";
-          mediaGrid.appendChild(vid);
-        } else {
-          const a = document.createElement('a');
-          a.href = m.url;
-          a.target = '_blank';
-          a.className = "flex items-center gap-2 col-span-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-[#3B5B47] hover:bg-[#f0faf2] transition";
-          a.innerHTML = `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg> ${m.name || 'Attachment'}`;
-          mediaGrid.appendChild(a);
+    async function getPlaceName(lat, lng) {
+      const cacheKey = `${parseFloat(lat).toFixed(4)},${parseFloat(lng).toFixed(4)}`;
+      if (locationCache[cacheKey]) return locationCache[cacheKey];
+      try {
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 800));
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+        if (!res.ok) return `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
+        const data = await res.json();
+        let placeName = "Unknown Location";
+        if (data && data.address) {
+          const a = data.address;
+          const parts = [a.neighbourhood || a.village || a.hamlet || a.suburb || a.road || "",
+                        a.city || a.municipality || a.town || "",
+                        a.county || a.state || ""].filter(p => p.trim());
+          placeName = parts.length ? parts.join(", ") : (data.display_name || "").split(",").slice(0,3).join(",").trim();
         }
-      });
-    } else {
-      mediaWrap.classList.add('hidden');
+        locationCache[cacheKey] = placeName || `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
+        localStorage.setItem('maroonerMapCache', JSON.stringify(locationCache));
+        return locationCache[cacheKey];
+      } catch { return `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`; }
     }
 
-    // Open
-    document.getElementById('detailBackdrop').classList.remove('hidden');
-    document.getElementById('detailDrawer').style.transform = 'translateX(0)';
-  };
+    // ─── DETAIL DRAWER ───
+    window.openDetail = function(docId) {
+      const entry = reportStore[docId];
+      if (!entry) return;
+      const { data, placeName, isOwner } = entry;
 
-  window.closeDetail = function() {
-    document.getElementById('detailDrawer').style.transform = 'translateX(100%)';
-    setTimeout(() => document.getElementById('detailBackdrop').classList.add('hidden'), 300);
-  };
+      const type   = data.type || data.incidentType || "Info";
+      const title  = data.title || "Untitled Report";
+      const desc   = data.description || "";
+      const status = data.status || "Reported";
+      const by     = data.reportedBy || data.reporterEmail || "Unknown";
+      const media  = data.mediaUrls || [];
 
-  // ─── CARD GENERATOR ───────────────────────────────────────────────────────
-  function generateCard(docId, type, title, typeColor, bgLight, textDark, iconSvg, timeString, statusBadge, mediaUrls) {
-    const mediaThumb = (mediaUrls && mediaUrls.length > 0)
-      ? `<div class="flex gap-1.5 mt-2 flex-wrap">
-          ${mediaUrls.slice(0,3).map(m => m.type && m.type.startsWith('image/')
-            ? `<img src="${m.url}" class="w-12 h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0">`
-            : m.type && m.type.startsWith('video/')
-            ? `<div class="w-12 h-12 rounded-lg bg-purple-100 border border-gray-200 flex items-center justify-center text-purple-500 flex-shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>`
-            : `<div class="w-12 h-12 rounded-lg bg-blue-50 border border-gray-200 flex items-center justify-center text-blue-400 flex-shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div>`
-          ).join('')}
-          ${mediaUrls.length > 3 ? `<div class="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 flex-shrink-0">+${mediaUrls.length - 3}</div>` : ''}
-        </div>` : '';
+      let iconSvg = "", typeColor = "", bgLight = "", textDark = "";
+      if (type.includes("SOS") || type.toLowerCase().includes("emergency")) {
+        typeColor = "bg-red-500"; bgLight = "bg-red-100"; textDark = "text-red-600";
+        iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+      } else if (type === "Hazard" || type.toLowerCase().includes("warning")) {
+        typeColor = "bg-yellow-500"; bgLight = "bg-yellow-100"; textDark = "text-yellow-600";
+        iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+      } else {
+        typeColor = "bg-[#3B5B47]"; bgLight = "bg-[#f0faf2]"; textDark = "text-[#3B5B47]";
+        iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+      }
 
-    return `
-      <div onclick="openDetail('${docId}')" data-doc-id="${docId}"
-        class="border border-gray-200 rounded-xl p-5 hover:border-[#95D3A2] hover:shadow-md transition bg-white cursor-pointer flex flex-col md:flex-row gap-4 items-start md:items-center group">
-        <div class="${bgLight} ${textDark} p-3 rounded-xl flex-shrink-0 group-hover:scale-105 transition-transform">
-          ${iconSvg}
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <h3 class="font-bold text-gray-900 text-base leading-snug">${title}</h3>
-            <span class="${typeColor} text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">${type}</span>
-          </div>
-          <p class="text-sm text-gray-400 mb-1 location-text" id="loc-${docId}">📍 Scanning coordinates…</p>
-          <div class="flex items-center gap-1 text-xs text-gray-400">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            ${timeString}
-          </div>
-          ${mediaThumb}
-        </div>
-        <div class="flex flex-col items-end gap-2 flex-shrink-0">
-          ${statusBadge}
-          <span class="text-xs text-[#3B5B47] font-semibold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-            View details
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-          </span>
-        </div>
-      </div>`;
-  }
+      let statusClass = "bg-gray-100 text-gray-500 border-gray-200";
+      if (status === "Reported") statusClass = "bg-blue-50 text-blue-600 border-blue-200";
+      else if (status === "In Progress" || status === "Dispatched") statusClass = "bg-yellow-50 text-yellow-700 border-yellow-200";
+      else if (status === "Resolved" || status === "Cleared by LGU") statusClass = "bg-green-50 text-green-700 border-green-200";
 
-  // ─── FIREBASE LISTENER ────────────────────────────────────────────────────
-  function loadReports(currentUserId) {
-    const myReportsContainer    = document.getElementById("newReportsList");
-    const communityContainer    = document.getElementById("communityReportsList");
-    const guestNotice           = document.getElementById("guestNotice");
-    const myReportsEmpty        = document.getElementById("myReportsEmpty");
-    const communityEmpty        = document.getElementById("communityEmpty");
+      let timeString = "Recently";
+      const td = data.createdAt || data.timestamp;
+      if (td) {
+        const d = td.toDate ? td.toDate() : new Date(td);
+        timeString = d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) + " · " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      }
 
-    // Guest state
-    if (!currentUserId) {
-      guestNotice.classList.remove('hidden');
-      myReportsEmpty.classList.add('hidden');
-    } else {
-      guestNotice.classList.add('hidden');
-    }
+      document.getElementById('detailIconWrap').className = `p-3 rounded-xl flex-shrink-0 ${bgLight} ${textDark}`;
+      document.getElementById('detailIconWrap').innerHTML = iconSvg;
+      document.getElementById('detailTypeBadge').className = `text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide text-white ${typeColor}`;
+      document.getElementById('detailTypeBadge').textContent = type;
+      document.getElementById('detailStatusBadge').className = `text-[10px] font-bold px-2 py-0.5 rounded-full border ${statusClass}`;
+      document.getElementById('detailStatusBadge').textContent = status;
+      document.getElementById('detailTitle').textContent = title;
+      document.getElementById('detailDesc').textContent = desc || "No description provided.";
+      document.getElementById('detailDescWrap').classList.toggle('hidden', !desc);
+      document.getElementById('detailLocation').textContent = placeName || "Locating…";
+      document.getElementById('detailTime').textContent = timeString;
+      document.getElementById('detailReporter').textContent = `Reported by ${by}`;
 
-    const reportsRef = collection(db, "reports");
-    onSnapshot(reportsRef, (snapshot) => {
-      myReportsContainer.innerHTML = "";
-      communityContainer.innerHTML = "";
-
-      let myCount = 0;
-      let communityCount = 0;
-
-      snapshot.forEach(async (doc) => {
-        try {
-          const data = doc.data();
-          const type         = data.type || data.incidentType || "Info";
-          const title        = data.title || "Untitled Report";
-          const status       = data.status || "Reported";
-          const lat          = data.lat || data.latitude;
-          const lng          = data.lng || data.longitude;
-          const reportOwner  = data.userId || null;
-          const mediaUrls    = data.mediaUrls || [];
-
-          let timeString = "Recently";
-          const td = data.createdAt || data.timestamp;
-          if (td) {
-            const d = td.toDate ? td.toDate() : new Date(td);
-            timeString = d.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + " · " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-          }
-
-          let iconSvg = "", typeColor = "", bgLight = "", textDark = "";
-          if (type.includes("SOS") || type.toLowerCase().includes("emergency")) {
-            typeColor = "bg-red-500"; bgLight = "bg-red-100"; textDark = "text-red-600";
-            iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-          } else if (type === "Hazard" || type.toLowerCase().includes("warning")) {
-            typeColor = "bg-yellow-500"; bgLight = "bg-yellow-100"; textDark = "text-yellow-600";
-            iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+      const mediaWrap = document.getElementById('detailMediaWrap');
+      const mediaGrid = document.getElementById('detailMediaGrid');
+      mediaGrid.innerHTML = '';
+      if (media.length > 0) {
+        mediaWrap.classList.remove('hidden');
+        media.forEach(m => {
+          if (m.type && m.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = m.url;
+            img.alt = m.name || 'photo';
+            img.className = "w-full h-36 object-cover rounded-xl cursor-pointer border-2 border-transparent hover:border-[#95D3A2] transition";
+            img.onclick = () => openLightbox(m.url, m.name);
+            mediaGrid.appendChild(img);
+          } else if (m.type && m.type.startsWith('video/')) {
+            const vid = document.createElement('video');
+            vid.src = m.url;
+            vid.controls = true;
+            vid.className = "w-full h-36 object-cover rounded-xl border border-gray-200";
+            mediaGrid.appendChild(vid);
           } else {
-            typeColor = "bg-[#3B5B47]"; bgLight = "bg-[#f0faf2]"; textDark = "text-[#3B5B47]";
-            iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            const a = document.createElement('a');
+            a.href = m.url;
+            a.target = '_blank';
+            a.className = "flex items-center gap-2 col-span-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-[#3B5B47] hover:bg-[#f0faf2] transition";
+            a.innerHTML = `<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg> ${m.name || 'Attachment'}`;
+            mediaGrid.appendChild(a);
           }
+        });
+      } else {
+        mediaWrap.classList.add('hidden');
+      }
 
-          let statusBadge = `<span class="bg-gray-100 text-gray-500 text-xs font-bold px-3 py-1 rounded-full border border-gray-200">${status}</span>`;
-          if (status === "Reported") statusBadge = `<span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">${status}</span>`;
-          else if (status === "In Progress") statusBadge = `<span class="bg-yellow-50 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full border border-yellow-200">${status}</span>`;
-          else if (status === "Resolved" || status === "Cleared by LGU") statusBadge = `<span class="bg-green-50 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">${status}</span>`;
+      // Handle Delete Button visibility and action
+      const deleteWrap = document.getElementById('detailActionWrap');
+      const deleteBtn = document.getElementById('detailDeleteBtn');
+      const isResolved = (status === "Resolved" || status === "Cleared by LGU");
 
-          const card = generateCard(doc.id, type, title, typeColor, bgLight, textDark, iconSvg, timeString, statusBadge, mediaUrls);
+      if (isOwner && !isResolved) {
+        deleteWrap.classList.remove('hidden');
+        deleteBtn.onclick = () => {
+          closeDetail(); // Close the drawer first
+          deleteMyReport(docId); // Trigger the standard delete prompt
+        };
+      } else {
+        deleteWrap.classList.add('hidden');
+      }
 
-          // All reports → Community tab
-          communityContainer.insertAdjacentHTML('beforeend', card);
-          communityCount++;
+      document.getElementById('detailBackdrop').classList.remove('hidden');
+      document.getElementById('detailDrawer').style.transform = 'translateX(0)';
+    };
 
-          // Only owner's reports → My Reports tab (skip if guest)
-          if (currentUserId && reportOwner === currentUserId) {
-            // Clone the card with a unique element ID to avoid duplicate loc-ids
-            const myCard = card.replace(`id="loc-${doc.id}"`, `id="loc-my-${doc.id}"`);
-            myReportsContainer.insertAdjacentHTML('beforeend', myCard);
-            myCount++;
-          }
+    window.closeDetail = function() {
+      document.getElementById('detailDrawer').style.transform = 'translateX(100%)';
+      setTimeout(() => document.getElementById('detailBackdrop').classList.add('hidden'), 300);
+    };
 
-          // Store for detail drawer
-          reportStore[doc.id] = { data, placeName: null };
+    // ─── CARD GENERATOR ───
+    function generateCard(docId, type, title, typeColor, bgLight, textDark, iconSvg, timeString, statusBadge, mediaUrls, isOwner = false, rawStatus = "Reported") {
+      const mediaThumb = (mediaUrls && mediaUrls.length > 0)
+        ? `<div class="flex gap-1.5 mt-2 flex-wrap">
+            ${mediaUrls.slice(0,3).map(m => m.type && m.type.startsWith('image/')
+              ? `<img src="${m.url}" class="w-12 h-12 rounded-lg object-cover border border-gray-200 flex-shrink-0">`
+              : m.type && m.type.startsWith('video/')
+              ? `<div class="w-12 h-12 rounded-lg bg-purple-100 border border-gray-200 flex items-center justify-center text-purple-500 flex-shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>`
+              : `<div class="w-12 h-12 rounded-lg bg-blue-50 border border-gray-200 flex items-center justify-center text-blue-400 flex-shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div>`
+            ).join('')}
+            ${mediaUrls.length > 3 ? `<div class="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 flex-shrink-0">+${mediaUrls.length - 3}</div>` : ''}
+          </div>` : '';
 
-          // Empty states
-          communityEmpty.classList.toggle('hidden', communityCount > 0);
-          if (currentUserId) myReportsEmpty.classList.toggle('hidden', myCount > 0);
+      const isResolved = (rawStatus === "Resolved" || rawStatus === "Cleared by LGU");
+      const cardBg = isResolved ? "bg-gray-50 opacity-80" : "bg-white";
 
-          // Reverse geocode & update location labels
-          if (lat && lng) {
-            getPlaceName(lat, lng).then(name => {
-              reportStore[doc.id].placeName = name;
+      return `
+        <div onclick="openDetail('${docId}')" data-doc-id="${docId}"
+          class="border border-gray-200 rounded-xl p-5 hover:border-[#95D3A2] hover:shadow-md transition ${cardBg} cursor-pointer flex flex-col md:flex-row gap-4 items-start md:items-center group relative">
+          <div class="${bgLight} ${textDark} p-3 rounded-xl flex-shrink-0 group-hover:scale-105 transition-transform">
+            ${iconSvg}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <h3 class="font-bold text-gray-900 text-base leading-snug">${title}</h3>
+              <span class="${typeColor} text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">${type}</span>
+            </div>
+            <p class="text-sm text-gray-400 mb-1 location-text" id="loc-${docId}">📍 Scanning coordinates…</p>
+            <div class="flex items-center gap-1 text-xs text-gray-400">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              ${timeString}
+            </div>
+            ${mediaThumb}
+          </div>
+          <div class="flex flex-col items-end gap-2 flex-shrink-0">
+            ${statusBadge}
+            <span class="text-xs text-[#3B5B47] font-semibold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+              View details
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </span>
+          </div>
+        </div>`;
+    }
+
+    // ─── FIREBASE LISTENER ───
+    function loadReports(currentUserId) {
+      const myReportsContainer    = document.getElementById("newReportsList");
+      const communityContainer    = document.getElementById("communityReportsList");
+      const guestNotice           = document.getElementById("guestNotice");
+      const myReportsEmpty        = document.getElementById("myReportsEmpty");
+      const communityEmpty        = document.getElementById("communityEmpty");
+      
+      const localUser = localStorage.getItem("userLoggedIn");
+      const isLocalUser = localUser && localUser !== "Guest User";
+
+      if (!currentUserId && !isLocalUser) {
+        guestNotice.classList.remove('hidden');
+        myReportsEmpty.classList.add('hidden');
+      } else {
+        guestNotice.classList.add('hidden');
+      }
+
+      // WE ADDED SORTING SO YOUR NEW REPORTS ALWAYS APPEAR AT THE TOP
+      const reportsRef = collection(db, "reports");
+      const q = query(reportsRef, orderBy("timestamp", "desc"));
+
+      onSnapshot(q, (snapshot) => {
+        myReportsContainer.innerHTML = "";
+        communityContainer.innerHTML = "";
+
+        let myCount = 0;
+        let communityCount = 0;
+
+        snapshot.forEach(async (doc) => {
+          try {
+            const data = doc.data();
+            const type         = data.type || data.incidentType || "Info";
+            const title        = data.title || "Untitled Report";
+            const status       = data.status || "Reported";
+            const lat          = data.lat || data.latitude;
+            const lng          = data.lng || data.longitude;
+            const reportOwner  = data.userId || null;
+            const reportedBy   = data.reportedBy || null;
+            const mediaUrls    = data.mediaUrls || [];
+
+            let timeString = "Recently";
+            const td = data.createdAt || data.timestamp;
+            if (td) {
+              const d = td.toDate ? td.toDate() : new Date(td);
+              timeString = d.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + " · " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            }
+
+            let iconSvg = "", typeColor = "", bgLight = "", textDark = "";
+            if (type.includes("SOS") || type.toLowerCase().includes("emergency")) {
+              typeColor = "bg-red-500"; bgLight = "bg-red-100"; textDark = "text-red-600";
+              iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+            } else if (type === "Hazard" || type.toLowerCase().includes("warning")) {
+              typeColor = "bg-yellow-500"; bgLight = "bg-yellow-100"; textDark = "text-yellow-600";
+              iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+            } else {
+              typeColor = "bg-[#3B5B47]"; bgLight = "bg-[#f0faf2]"; textDark = "text-[#3B5B47]";
+              iconSvg = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            }
+
+            let statusBadge = `<span class="bg-gray-100 text-gray-500 text-xs font-bold px-3 py-1 rounded-full border border-gray-200">${status}</span>`;
+            if (status === "Reported") statusBadge = `<span class="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">${status}</span>`;
+            else if (status === "In Progress" || status === "Dispatched") statusBadge = `<span class="bg-yellow-50 text-yellow-700 text-xs font-bold px-3 py-1 rounded-full border border-yellow-200">${status}</span>`;
+            else if (status === "Resolved" || status === "Cleared by LGU") statusBadge = `<span class="bg-green-50 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">${status}</span>`;
+
+            const communityCard = generateCard(doc.id, type, title, typeColor, bgLight, textDark, iconSvg, timeString, statusBadge, mediaUrls, false, status);
+            communityContainer.insertAdjacentHTML('beforeend', communityCard);
+            communityCount++;
+
+            const isOwner = (currentUserId && reportOwner === currentUserId) || 
+                            (isLocalUser && reportedBy === localUser);
+
+            if (isOwner) {
+              const myCardTemplate = generateCard(doc.id, type, title, typeColor, bgLight, textDark, iconSvg, timeString, statusBadge, mediaUrls, true, status);
+              const myCard = myCardTemplate.replace(`id="loc-${doc.id}"`, `id="loc-my-${doc.id}"`);
+              myReportsContainer.insertAdjacentHTML('beforeend', myCard);
+              myCount++;
+            }
+
+            // Add isOwner so the detail drawer knows who can delete this
+            reportStore[doc.id] = { data, placeName: null, isOwner: isOwner };
+
+            communityEmpty.classList.toggle('hidden', communityCount > 0);
+            if (currentUserId || isLocalUser) myReportsEmpty.classList.toggle('hidden', myCount > 0);
+
+            if (lat && lng) {
+              getPlaceName(lat, lng).then(name => {
+                reportStore[doc.id].placeName = name;
+                const el1 = document.getElementById(`loc-${doc.id}`);
+                const el2 = document.getElementById(`loc-my-${doc.id}`);
+                if (el1) el1.textContent = `📍 ${name}`;
+                if (el2) el2.textContent = `📍 ${name}`;
+              });
+            } else if (data.location) {
+              reportStore[doc.id].placeName = data.location;
               const el1 = document.getElementById(`loc-${doc.id}`);
               const el2 = document.getElementById(`loc-my-${doc.id}`);
-              if (el1) el1.textContent = `📍 ${name}`;
-              if (el2) el2.textContent = `📍 ${name}`;
-            });
-          } else if (data.location) {
-            reportStore[doc.id].placeName = data.location;
-            const el1 = document.getElementById(`loc-${doc.id}`);
-            const el2 = document.getElementById(`loc-my-${doc.id}`);
-            if (el1) el1.textContent = `📍 ${data.location}`;
-            if (el2) el2.textContent = `📍 ${data.location}`;
-          }
+              if (el1) el1.textContent = `📍 ${data.location}`;
+              if (el2) el2.textContent = `📍 ${data.location}`;
+            }
+          } catch (err) { console.error("Error processing doc:", doc.id, err); }
+        });
 
-        } catch (err) { console.error("Error processing doc:", doc.id, err); }
+        if (snapshot.size === 0) communityEmpty.classList.remove('hidden');
+        if ((currentUserId || isLocalUser) && myCount === 0) myReportsEmpty.classList.remove('hidden');
       });
-
-      // Final empty state check (in case snapshot is empty)
-      if (snapshot.size === 0) communityEmpty.classList.remove('hidden');
-      if (currentUserId && myCount === 0) myReportsEmpty.classList.remove('hidden');
-    });
-  }
-
-  // ─── AUTH STATE ───────────────────────────────────────────────────────────
-  onAuthStateChanged(auth, (user) => {
-    document.getElementById("newReportsList").innerHTML = "";
-    document.getElementById("communityReportsList").innerHTML = "";
-    loadReports(user ? user.uid : null);
-  });
-
-  // ─── SUBMIT NEW REPORT ────────────────────────────────────────────────────
-  const submitBtn = document.getElementById('submitReportBtn');
-  submitBtn.addEventListener('click', async () => {
-    const user = auth.currentUser;
-    if (!user) { alert("You must be logged in to submit a report."); return; }
-
-    const title       = document.getElementById('reportTitle').value.trim();
-    const locationStr = document.getElementById('reportLocation').value.trim();
-    const description = document.getElementById('reportDescription').value.trim();
-    const errorEl     = document.getElementById('formError');
-    const activeTypeBtn = document.querySelector('.type-btn.ring-2');
-    const type        = activeTypeBtn ? activeTypeBtn.dataset.type : "";
-
-    if (!title || !locationStr || !type) { errorEl.classList.remove('hidden'); return; }
-    errorEl.classList.add('hidden');
-
-    const originalHtml = submitBtn.innerHTML;
-    submitBtn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Submitting…`;
-    submitBtn.disabled = true;
-
-    try {
-      // Upload files
-      const mediaUrls = [];
-      for (const f of window._selectedFiles || []) {
-        const ref = storageRef(storage, `reports/${Date.now()}_${f.name}`);
-        const snap = await uploadBytes(ref, f);
-        const url  = await getDownloadURL(snap.ref);
-        mediaUrls.push({ url, type: f.type, name: f.name });
-      }
-
-      await addDoc(collection(db, "reports"), {
-        title, description, location: locationStr,
-        type, status: "Reported",
-        userId: user.uid, reportedBy: user.displayName || user.email || "User",
-        mediaUrls,
-        timestamp: serverTimestamp(),
-      });
-
-      document.getElementById('closeModalBtn').click();
-    } catch (err) {
-      console.error("Submit error:", err);
-      alert("Failed to submit report. Please try again.");
-    } finally {
-      submitBtn.innerHTML = originalHtml;
-      submitBtn.disabled = false;
     }
-  });
+
+    onAuthStateChanged(auth, (user) => {
+      document.getElementById("newReportsList").innerHTML = "";
+      document.getElementById("communityReportsList").innerHTML = "";
+      loadReports(user ? user.uid : null);
+    });
+
+    // ─── SUBMIT NEW REPORT ───
+    const submitBtn = document.getElementById('submitReportBtn');
+    submitBtn.addEventListener('click', async () => {
+      
+      const user = auth.currentUser;
+      const localUser = localStorage.getItem("userLoggedIn");
+      const isLocalUser = localUser && localUser !== "Guest User";
+
+      // If they aren't logged into Firebase, let them act as the Guest/Local storage user!
+      const uid = user ? user.uid : "anonymous";
+      const reporterName = user ? (user.displayName || user.email) : (isLocalUser ? localUser : "Guest User");
+
+      const title       = document.getElementById('reportTitle').value.trim();
+      const locationStr = document.getElementById('reportLocation').value.trim();
+      const description = document.getElementById('reportDescription').value.trim();
+      const errorEl     = document.getElementById('formError');
+      const activeTypeBtn = document.querySelector('.type-btn.ring-2');
+      const type        = activeTypeBtn ? activeTypeBtn.dataset.type : "";
+
+      if (!title || !locationStr || !type) { errorEl.classList.remove('hidden'); return; }
+      errorEl.classList.add('hidden');
+
+      const originalHtml = submitBtn.innerHTML;
+      submitBtn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Submitting…`;
+      submitBtn.disabled = true;
+
+      try {
+        const mediaUrls = [];
+        for (const f of window._selectedFiles || []) {
+          const ref = storageRef(storage, `reports/${Date.now()}_${f.name}`);
+          const snap = await uploadBytes(ref, f);
+          const url  = await getDownloadURL(snap.ref);
+          mediaUrls.push({ url, type: f.type, name: f.name });
+        }
+
+        await addDoc(collection(db, "reports"), {
+          title, description, location: locationStr,
+          type, status: "Reported",
+          userId: uid, 
+          reportedBy: reporterName,
+          mediaUrls,
+          timestamp: serverTimestamp(),
+        });
+
+        document.getElementById('closeModalBtn').click();
+      } catch (err) {
+        console.error("Submit error:", err);
+        alert("Failed to submit report. Please try again.");
+      } finally {
+        submitBtn.innerHTML = originalHtml;
+        submitBtn.disabled = false;
+      }
+    });
+
+    window.deleteMyReport = async function(docId) {
+      if (confirm("Are you sure you want to delete this report? This action cannot be undone.")) {
+        try {
+          await deleteDoc(doc(db, "reports", docId));
+        } catch (err) {
+          console.error("Error deleting document: ", err);
+          alert("Failed to delete the report. Please try again.");
+        }
+      }
+    };
 
   </script>
 </body>
