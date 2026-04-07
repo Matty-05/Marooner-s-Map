@@ -6,7 +6,6 @@
   <title>LGU Command Center - Reports List</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Custom brand colors */
     .bg-brand-dark { background-color: #3B5B47; }
     .bg-brand-light { background-color: #95D3A2; }
     .text-brand-light { color: #95D3A2; }
@@ -15,24 +14,27 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 min-h-screen md:h-screen w-full flex flex-col md:flex-row overflow-x-hidden md:overflow-hidden m-0 p-0">
 
+  <!-- Sidebar -->
   <div class="flex flex-row md:flex-col w-full md:w-24 h-16 md:h-full bg-[#263D2F] items-center px-4 md:px-0 py-0 md:py-6 justify-between md:rounded-r-3xl z-20 shadow-md md:shadow-2xl flex-shrink-0 border-b md:border-b-0 md:border-r border-[#95D3A2]/20">
     <div class="flex flex-row md:flex-col space-x-4 md:space-x-0 md:space-y-8 items-center">
       <a href="admin-dashboard.html" class="w-10 h-10 hover:bg-white/10 rounded-xl flex items-center justify-center text-white/50 hover:text-white cursor-pointer transition">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
       </a>
-      
       <a href="admin-sms-list.html" class="w-10 h-10 md:w-14 md:h-14 bg-red-600 rounded-xl flex items-center justify-center text-white shadow-lg md:mb-2 transition transform hover:scale-105 border-2 border-white/20">
         <svg class="w-5 h-5 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
       </a>
     </div>
-    
-    <a href="index.html" class="w-10 h-10 hover:bg-red-500/20 rounded-xl flex items-center justify-center text-red-400 hover:text-red-500 cursor-pointer ml-auto md:ml-0 md:mt-auto transition">
+
+    <!-- Logout -->
+    <button onclick="adminLogout()" title="Logout"
+      class="w-10 h-10 hover:bg-red-500/20 rounded-xl flex items-center justify-center text-red-400 hover:text-red-500 cursor-pointer ml-auto md:ml-0 md:mt-auto transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-    </a>
+    </button>
   </div>
 
+  <!-- Main Content -->
   <div class="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto md:overflow-hidden relative">
-    
+
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
       <div>
         <div class="flex items-center gap-3">
@@ -53,11 +55,9 @@
         <div class="hidden md:block h-8 w-px bg-gray-300"></div>
 
         <div class="hidden md:flex items-center gap-3">
-          <div class="w-10 h-10 bg-[#3B5B47] text-[#95D3A2] rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white">
-            AD
-          </div>
+          <div class="w-10 h-10 bg-[#3B5B47] text-[#95D3A2] rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white" id="adminAvatar">AD</div>
           <div>
-            <p class="text-sm font-bold text-gray-800 leading-none">Admin</p>
+            <p class="text-sm font-bold text-gray-800 leading-none" id="adminNameDisplay">Admin</p>
             <p class="text-xs text-gray-500 font-medium mt-1">LGU Official</p>
           </div>
         </div>
@@ -93,5 +93,33 @@
 
   </div>
 
+  <script>
+    // ─── Auth guard ────────────────────────────────────────────────────────────
+    (function checkAuth() {
+      if (localStorage.getItem('adminLoggedIn') !== 'true') {
+        window.location.replace('index.html');
+      }
+    })();
+
+    // ─── Populate admin name ───────────────────────────────────────────────────
+    (function populateAdminHeader() {
+      const fullname = localStorage.getItem('adminFullname') || 'Admin';
+      const nameEl   = document.getElementById('adminNameDisplay');
+      const avatarEl = document.getElementById('adminAvatar');
+      if (nameEl)   nameEl.textContent   = fullname;
+      if (avatarEl) avatarEl.textContent = fullname.slice(0, 2).toUpperCase();
+    })();
+
+    // ─── Logout ───────────────────────────────────────────────────────────────
+    function adminLogout() {
+      const keys = [
+        'adminLoggedIn', 'adminUsername', 'adminFullname', 'accountType',
+        'userLoggedIn', 'userEmail', 'userPhone', 'userBirthday',
+        'userRegion', 'userProvince', 'userCity', 'userBarangay'
+      ];
+      keys.forEach(k => localStorage.removeItem(k));
+      window.location.href = 'index.html';
+    }
+  </script>
 </body>
 </html>

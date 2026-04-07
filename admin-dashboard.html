@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <style> #map {position:absolute; top: 0; bottom: 0; left: 0; right:0;}</style>
+  <style> #map { position:absolute; top:0; bottom:0; left:0; right:0; } </style>
   <title>LGU Command Center - Marooner's Map</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -22,6 +22,7 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 min-h-screen md:h-screen w-full flex flex-col md:flex-row overflow-x-hidden md:overflow-hidden m-0 p-0">
 
+  <!-- Sidebar -->
   <div class="flex flex-row md:flex-col w-full md:w-24 h-16 md:h-full bg-[#263D2F] items-center px-4 md:px-0 py-0 md:py-6 justify-between md:rounded-r-3xl z-20 shadow-md md:shadow-2xl flex-shrink-0 border-b md:border-b-0 md:border-r border-[#95D3A2]/20">
     <div class="flex flex-row md:flex-col space-x-4 md:space-x-0 md:space-y-8 items-center">
       <a href="admin-dashboard.html" class="w-10 h-10 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg md:mb-2 transition transform hover:scale-105 border-2 border-white/20">
@@ -31,13 +32,16 @@
         <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
       </a>
     </div>
-    <a href="index.html" class="w-10 h-10 hover:bg-red-500/20 rounded-xl flex items-center justify-center text-red-400 hover:text-red-500 cursor-pointer ml-auto md:ml-0 md:mt-auto transition">
+    <!-- Logout button -->
+    <button onclick="adminLogout()" title="Logout"
+      class="w-10 h-10 hover:bg-red-500/20 rounded-xl flex items-center justify-center text-red-400 hover:text-red-500 cursor-pointer ml-auto md:ml-0 md:mt-auto transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-    </a>
+    </button>
   </div>
 
+  <!-- Main Content -->
   <div class="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto md:overflow-hidden relative">
-    
+
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
       <div>
         <div class="flex items-center gap-3">
@@ -62,15 +66,16 @@
         </div>
         <div class="hidden md:block h-8 w-px bg-gray-300"></div>
         <div class="hidden md:flex items-center gap-3">
-          <div class="w-10 h-10 bg-[#3B5B47] text-[#95D3A2] rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white">AD</div>
+          <div class="w-10 h-10 bg-[#3B5B47] text-[#95D3A2] rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white" id="adminAvatar">AD</div>
           <div>
-            <p class="text-sm font-bold text-gray-800 leading-none">Admin</p>
+            <p class="text-sm font-bold text-gray-800 leading-none" id="adminNameDisplay">Admin</p>
             <p class="text-xs text-gray-500 font-medium mt-1">LGU Official</p>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Stat Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 shrink-0">
       <div class="bg-white rounded-xl p-4 shadow-sm border border-l-4 border-l-red-500 flex flex-col">
         <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Pending SOS</span>
@@ -90,8 +95,10 @@
       </div>
     </div>
 
+    <!-- Map + Queue -->
     <div class="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
-      
+
+      <!-- Live Map -->
       <div class="lg:w-7/12 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden min-h-[300px]">
         <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <h2 class="font-bold text-gray-800 flex items-center gap-2">
@@ -104,12 +111,13 @@
             <script>
               var map = L.map('map').setView([10.6410, 122.2355], 13);
               L.tileLayer('https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=pxJ2FnvFl8J48s3zwqMi',
-              {attribution:'<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a>'}).addTo(map);
+              { attribution:'<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a>' }).addTo(map);
             </script>
           </div>
         </div>
       </div>
 
+      <!-- Incident Queue -->
       <div class="lg:w-5/12 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col overflow-hidden min-h-[300px]">
         <div class="pt-4 px-4 border-b border-gray-100 flex flex-col bg-gray-50 gap-4">
           <div class="flex justify-between items-center">
@@ -119,7 +127,6 @@
             </h2>
             <span id="queueTotalBadge" class="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full">0 Total</span>
           </div>
-          
           <div class="flex gap-4" id="filterTabs">
             <button data-filter="All" class="filter-tab pb-2 text-sm font-bold border-b-2 border-[#3B5B47] text-[#3B5B47] transition">All</button>
             <button data-filter="Reported" class="filter-tab pb-2 text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition">Reported</button>
@@ -127,36 +134,62 @@
             <button data-filter="Resolved" class="filter-tab pb-2 text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition">Resolved</button>
           </div>
         </div>
-
-        <div class="flex-1 overflow-y-auto queue-scroll p-4 space-y-3" id="queueContainer">
-          </div>
+        <div class="flex-1 overflow-y-auto queue-scroll p-4 space-y-3" id="queueContainer"></div>
       </div>
     </div>
   </div>
 
+  <!-- Toast -->
   <div id="toast" class="fixed bottom-6 right-6 bg-[#3B5B47] text-[#95D3A2] px-6 py-3 rounded-xl shadow-2xl font-bold flex items-center gap-3 transform translate-y-20 opacity-0 transition duration-300 z-50">
     <svg id="toastIcon" class="w-5 h-5 text-[#95D3A2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
     <span id="toastMsg">Status Updated</span>
   </div>
 
   <script>
+    // ─── Auth guard: redirect to login if not admin ───────────────────────────
+    (function checkAuth() {
+      const isAdmin = localStorage.getItem('adminLoggedIn') === 'true';
+      if (!isAdmin) {
+        window.location.replace('index.html');
+      }
+    })();
+
+    // ─── Show admin name in header ────────────────────────────────────────────
+    (function populateAdminHeader() {
+      const fullname = localStorage.getItem('adminFullname') || 'Admin';
+      const username = localStorage.getItem('adminUsername') || '';
+      const nameEl   = document.getElementById('adminNameDisplay');
+      const avatarEl = document.getElementById('adminAvatar');
+      if (nameEl)   nameEl.textContent   = fullname;
+      if (avatarEl) avatarEl.textContent = fullname.slice(0, 2).toUpperCase();
+    })();
+
+    // ─── Logout ───────────────────────────────────────────────────────────────
+    function adminLogout() {
+      const keys = [
+        'adminLoggedIn', 'adminUsername', 'adminFullname', 'accountType',
+        'userLoggedIn', 'userEmail', 'userPhone', 'userBirthday',
+        'userRegion', 'userProvince', 'userCity', 'userBarangay'
+      ];
+      keys.forEach(k => localStorage.removeItem(k));
+      window.location.href = 'index.html';
+    }
+
+    // ─── Toast helper ─────────────────────────────────────────────────────────
     function showToast(message, isDelete = false) {
-      const toast = document.getElementById('toast');
+      const toast    = document.getElementById('toast');
       const toastMsg = document.getElementById('toastMsg');
-      const toastIcon = document.getElementById('toastIcon');
-
+      const toastIcon= document.getElementById('toastIcon');
       toastMsg.innerText = message;
-
-      if(isDelete) {
+      if (isDelete) {
         toast.className = "fixed bottom-6 right-6 bg-red-600 text-white px-6 py-3 rounded-xl shadow-2xl font-bold flex items-center gap-3 transform transition duration-300 z-50";
         toastIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>`;
       } else {
         toast.className = "fixed bottom-6 right-6 bg-[#3B5B47] text-[#95D3A2] px-6 py-3 rounded-xl shadow-2xl font-bold flex items-center gap-3 transform transition duration-300 z-50";
         toastIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>`;
       }
-
       toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
     }
   </script>
 
@@ -173,53 +206,137 @@
       appId: "1:630717954342:web:d83fcde58c2a7efd8129e7",
       measurementId: "G-DWJKH47FPM"
     };
-
+    
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    function renderMedia(mediaArray) {
+      if (!mediaArray || mediaArray.length === 0) return '';
+      return `<div class="flex gap-2 mt-2 overflow-x-auto pb-1">` + 
+        mediaArray.map(item => {
+          if (item.type && item.type.startsWith('video/')) {
+            return `<video src="${item.url}" class="h-20 w-32 object-cover rounded-lg border border-gray-200" controls></video>`;
+          }
+          return `<img src="${item.url}" class="h-20 w-20 object-cover rounded-lg border border-gray-200 cursor-pointer" onclick="window.openLightbox('${item.url}')">`;
+        }).join('') + `</div>`;
+    }
+    const db  = getFirestore(app);
 
+    // ─── Leaflet icon factory ─────────────────────────────────────────────────
     const createIcon = (color) => new L.Icon({
-        iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
+      iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34]
     });
 
-    let adminMarkers = []; 
-    let allReportsData = []; 
-    let currentFilter = "All";
+    let adminMarkers  = [];
+    let allReportsData = [];
 
-    // Tab Filter Logic
+    // ─── Reverse-geocoding cache (shared with client pages) ──────────────────
+    let locationCache = {};
+    try { locationCache = JSON.parse(localStorage.getItem('maroonerMapCache')) || {}; } catch(e) {}
+
+    /**
+     * Resolve lat/lng → human-readable place name.
+     * Uses the same Nominatim API as reportslist.html, with the same
+     * caching strategy so repeated lookups are instant.
+     */
+    async function getPlaceName(lat, lng) {
+      if (!lat || !lng) return null;
+      const key = `${parseFloat(lat).toFixed(4)},${parseFloat(lng).toFixed(4)}`;
+      if (locationCache[key]) return locationCache[key];
+      try {
+        // Slight random delay to avoid hammering Nominatim
+        await new Promise(r => setTimeout(r, Math.random() * 600 + 200));
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+        );
+        if (!res.ok) return `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
+        const data = await res.json();
+        let placeName = `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
+        if (data && data.address) {
+          const a = data.address;
+          const parts = [
+            a.neighbourhood || a.village || a.hamlet || a.suburb || a.road || '',
+            a.city || a.municipality || a.town || '',
+            a.county || a.state || ''
+          ].filter(p => p.trim());
+          placeName = parts.length
+            ? parts.join(', ')
+            : (data.display_name || '').split(',').slice(0, 3).join(',').trim();
+        }
+        locationCache[key] = placeName;
+        try { localStorage.setItem('maroonerMapCache', JSON.stringify(locationCache)); } catch(e) {}
+        return placeName;
+      } catch {
+        return `${parseFloat(lat).toFixed(4)}, ${parseFloat(lng).toFixed(4)}`;
+      }
+    }
+
+    // ─── Filter tabs ──────────────────────────────────────────────────────────
+    let currentFilter = "All";
     document.querySelectorAll('.filter-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
-        // Update tab visuals
         document.querySelectorAll('.filter-tab').forEach(t => {
           t.classList.remove('border-[#3B5B47]', 'text-[#3B5B47]', 'font-bold');
           t.classList.add('border-transparent', 'text-gray-500', 'font-semibold');
         });
         e.target.classList.remove('border-transparent', 'text-gray-500', 'font-semibold');
         e.target.classList.add('border-[#3B5B47]', 'text-[#3B5B47]', 'font-bold');
-
         currentFilter = e.target.dataset.filter;
-        renderQueue(); // Re-draw list based on new filter
+        renderQueue();
       });
     });
 
-    onSnapshot(collection(db, "reports"), (snapshot) => {
+    // ─── Firestore real-time listener ─────────────────────────────────────────
+    onSnapshot(collection(db, "reports"), async (snapshot) => {
       allReportsData = [];
       let pendingSOS = 0, pendingHazard = 0, dispatched = 0, resolved = 0;
 
       adminMarkers.forEach(m => map.removeLayer(m));
       adminMarkers = [];
 
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const type = data.type || "Info";
+      // Collect all docs first so we can geocode in parallel
+      const docsArr = [];
+      snapshot.forEach(docSnap => docsArr.push({ id: docSnap.id, data: docSnap.data() }));
+
+      // Geocode all reports that have lat/lng (parallel, non-blocking render)
+      const geocodePromises = docsArr.map(async ({ id, data }) => {
+        const type   = data.type   || "Info";
         const status = data.status || "Reported";
-        const title = data.title || "Untitled";
+        const title  = data.title  || "Untitled";
+        // Line 305 (approx): Inside the allReportsData loop
+        const mediaHtml = report.data.media ? renderMedia(report.data.media) : '';
 
-        // Save for filtering
-        allReportsData.push({ id: docSnap.id, data: data, type, status, title });
+        const html = `
+          <div class="queue-item border ${borderColor} ${bgTint} rounded-xl p-4 flex flex-col gap-3 transition">
+            <div class="flex justify-between items-start">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="${typeColor} text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">${report.type}</span>
+                  <span class="text-xs text-gray-500 font-semibold">Web App</span>
+                </div>
+                <h3 class="font-bold text-gray-900 text-sm truncate">"${report.title}"</h3>
+                <p class="text-xs text-gray-500 mt-1 flex items-start gap-1 flex-wrap">
+                  <span class="flex items-center">${locDisplay}</span>
+                  <span class="text-gray-300">|</span>
+                  <span class="text-blue-600 font-semibold">${report.data.reportedBy || 'Anonymous'}</span>
+                </p>
+                
+                ${mediaHtml}
+                
+              </div>
+            </div>
+            <div class="flex items-center gap-3 mt-1">
+              </div>
+          </div>`;
+        // Derive location label: prefer stored text, else reverse-geocode
+        let locationLabel = data.location || null;
+        if (!locationLabel && data.lat && data.lng) {
+          locationLabel = await getPlaceName(data.lat, data.lng);
+        }
 
-        // Calculate Analytics
+        allReportsData.push({ id, data, type, status, title, locationLabel });
+
+        // Stats
         if (status === "Resolved" || status === "Cleared by LGU") resolved++;
         else if (status === "Dispatched" || status === "In Progress") dispatched++;
         else {
@@ -227,80 +344,97 @@
           if (type.includes("Hazard")) pendingHazard++;
         }
 
-        // Draw Map Pins
+        // Map pin
         if (data.lat && data.lng) {
           let icon = createIcon('blue');
           if (type.includes("SOS")) icon = createIcon('red');
           else if (type.includes("Hazard")) icon = createIcon('yellow');
-
-          const marker = L.marker([data.lat, data.lng], {icon}).addTo(map)
-            .bindPopup(`<b class="uppercase text-xs text-gray-500">${type}</b><br><strong class="text-sm">${title}</strong><br><i class="text-xs">${status}</i>`);
+          const marker = L.marker([data.lat, data.lng], { icon }).addTo(map)
+            .bindPopup(`<b class="uppercase text-xs text-gray-500">${type}</b><br><strong class="text-sm">${title}</strong><br><i class="text-xs">${locationLabel || ''}</i><br><i class="text-xs">${status}</i>`);
           adminMarkers.push(marker);
         }
       });
 
-      // Update Statistic Cards
-      document.getElementById('statSOS').textContent = pendingSOS;
-      document.getElementById('statHazard').textContent = pendingHazard;
-      document.getElementById('statDispatched').textContent = dispatched;
-      document.getElementById('statResolved').textContent = resolved;
+      // Wait for all geocoding, then render
+      await Promise.all(geocodePromises);
 
-      renderQueue(); 
+      document.getElementById('statSOS').textContent        = pendingSOS;
+      document.getElementById('statHazard').textContent     = pendingHazard;
+      document.getElementById('statDispatched').textContent = dispatched;
+      document.getElementById('statResolved').textContent   = resolved;
+
+      renderQueue();
     });
 
+    // ─── Render queue cards ───────────────────────────────────────────────────
     function renderQueue() {
-      const queueContainer = document.getElementById('queueContainer');
-      queueContainer.innerHTML = '';
-      let filteredCount = 0;
+      const container = document.getElementById('queueContainer');
+      container.innerHTML = '';
+      let count = 0;
 
-      allReportsData.forEach(report => {
-        // Check Filter condition
+      // Sort: newest first (relies on Firestore doc order; adjust if needed)
+      [...allReportsData].reverse().forEach(report => {
         if (currentFilter !== "All" && report.status !== currentFilter) return;
-        
-        filteredCount++;
-        let typeColor = "bg-blue-500", borderColor = "border-blue-200", bgTint = "bg-blue-50/30";
-        if (report.type.includes("SOS")) { typeColor = "bg-red-500"; borderColor = "border-red-200"; bgTint = "bg-red-50/30"; }
-        else if (report.type.includes("Hazard")) { typeColor = "bg-yellow-500"; borderColor = "border-yellow-200"; bgTint = "bg-yellow-50/30"; }
+        count++;
 
-        const queueHtml = `
+        let typeColor   = "bg-blue-500";
+        let borderColor = "border-blue-200";
+        let bgTint      = "bg-blue-50/30";
+        if (report.type.includes("SOS")) {
+          typeColor = "bg-red-500"; borderColor = "border-red-200"; bgTint = "bg-red-50/30";
+        } else if (report.type.includes("Hazard")) {
+          typeColor = "bg-yellow-500"; borderColor = "border-yellow-200"; bgTint = "bg-yellow-50/30";
+        }
+
+        // Location display: resolved name OR coords fallback OR placeholder
+        const locDisplay = report.locationLabel
+          ? `<svg class="w-3 h-3 inline-block mr-0.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>${report.locationLabel}`
+          : `<span class="text-gray-400 italic">Locating…</span>`;
+
+        const html = `
           <div class="queue-item border ${borderColor} ${bgTint} rounded-xl p-4 flex flex-col gap-3 transition">
             <div class="flex justify-between items-start">
-              <div>
+              <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 mb-1">
                   <span class="${typeColor} text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">${report.type}</span>
-                  <span class="text-xs text-gray-500 font-semibold flex items-center gap-1">Web App</span>
+                  <span class="text-xs text-gray-500 font-semibold">Web App</span>
                 </div>
-                <h3 class="font-bold text-gray-900 text-sm">"${report.title}"</h3>
-                <p class="text-xs text-gray-500 mt-1">Loc: ${report.data.location || 'See Map Pin'} | <span class="text-blue-600 font-semibold">${report.data.reportedBy || 'Anonymous'}</span></p>
+                <h3 class="font-bold text-gray-900 text-sm truncate">"${report.title}"</h3>
+                <p class="text-xs text-gray-500 mt-1 flex items-start gap-1 flex-wrap">
+                  <span class="flex items-center">${locDisplay}</span>
+                  <span class="text-gray-300">|</span>
+                  <span class="text-blue-600 font-semibold">${report.data.reportedBy || 'Anonymous'}</span>
+                </p>
               </div>
             </div>
             <div class="flex items-center gap-3 mt-1">
-              <select onchange="updateStatusDb(this, '${report.id}')" class="bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer w-32">
-                <option value="Reported" ${report.status==='Reported'?'selected':''}>🚨 Reported</option>
+              <select onchange="updateStatusDb(this, '${report.id}')"
+                class="bg-white border border-gray-300 text-gray-700 text-xs font-bold rounded-lg px-2 py-1.5 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer w-32">
+                <option value="Reported"   ${report.status==='Reported'  ?'selected':''}>🚨 Reported</option>
                 <option value="Dispatched" ${report.status==='Dispatched'?'selected':''}>🚓 Dispatched</option>
-                <option value="Resolved" ${report.status==='Resolved'?'selected':''}>✅ Resolved</option>
+                <option value="Resolved"   ${report.status==='Resolved'  ?'selected':''}>✅ Resolved</option>
               </select>
-              <button onclick="removeReportDb(this, '${report.id}')" class="text-xs text-red-500 font-bold hover:text-red-700 transition flex items-center gap-1 ml-auto">
+              <button onclick="removeReportDb(this, '${report.id}')"
+                class="text-xs text-red-500 font-bold hover:text-red-700 transition flex items-center gap-1 ml-auto">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 Remove
               </button>
             </div>
           </div>`;
-        queueContainer.insertAdjacentHTML('afterbegin', queueHtml);
+        container.insertAdjacentHTML('beforeend', html);
       });
 
-      document.getElementById('queueTotalBadge').textContent = `${filteredCount} Items`;
+      document.getElementById('queueTotalBadge').textContent = `${count} Items`;
     }
 
-    // Global Functions for the HTML Event Listeners
-    window.updateStatusDb = async (selectElement, docId) => {
-      const newVal = selectElement.value;
-      await updateDoc(doc(db, "reports", docId), { status: newVal });
-      showToast(`Report updated to ${newVal.toUpperCase()}`, false);
+    // ─── Global DB helpers ────────────────────────────────────────────────────
+    window.updateStatusDb = async (sel, docId) => {
+      await updateDoc(doc(db, "reports", docId), { status: sel.value });
+      showToast(`Report updated to ${sel.value.toUpperCase()}`, false);
     };
 
-    window.removeReportDb = async (btnElement, docId) => {
-      if(confirm("Permanently delete this report from the database? Users will no longer see it.")) {
+    window.removeReportDb = async (btn, docId) => {
+      if (confirm("Permanently delete this report from the database? Users will no longer see it.")) {
         await deleteDoc(doc(db, "reports", docId));
         showToast("Report permanently removed.", true);
       }

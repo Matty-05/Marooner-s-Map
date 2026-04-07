@@ -22,6 +22,15 @@
       background-repeat: no-repeat;
       background-size: 1.25em 1.25em;
     }
+
+    /* Drop zone styles */
+    #dropZone.drag-over {
+      border-color: #3B5B47;
+      background-color: #f0faf2;
+    }
+
+    /* File chip remove button */
+    .file-chip button:hover { color: #dc2626; }
   </style>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -33,11 +42,11 @@
 
   <div class="flex flex-row md:flex-col w-full md:w-24 h-16 md:h-full bg-brand-dark items-center px-4 md:px-0 py-0 md:py-6 justify-between md:rounded-r-3xl z-20 shadow-md md:shadow-2xl flex-shrink-0">
     <div class="flex flex-row md:flex-col space-x-4 md:space-x-0 md:space-y-8 items-center">
-      <a href="dashboard.html" class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center shadow-lg mb-2 transition transform hover:scale-105">
+      <a href="index.html" class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center shadow-lg mb-2 transition transform hover:scale-105">
         <svg class="w-8 h-8 text-[#3B5B47]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
       </a>
       
-      <a href="dashboard.html" class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-brand-light cursor-pointer transition shadow-inner">
+      <a href="index.html" class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-brand-light cursor-pointer transition shadow-inner">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
       </a>
       
@@ -49,10 +58,11 @@
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
       </a>
     </div>
-    <a href="profile.html" class="w-10 h-10 md:w-14 md:h-14 bg-brand-light rounded-full flex items-center justify-center shadow-lg md:mb-2 transition transform hover:scale-105"></a>
+    
+    <a href="profile.html" class="w-10 h-10 bg-brand-light rounded-full flex items-center justify-center shadow-md cursor-pointer md:mt-auto text-brand-dark font-bold text-sm hover:scale-105 transition">
+    </a>
   </div>
 
-  <!-- Main Content -->
   <div class="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto md:overflow-hidden relative">
     
     <div class="flex justify-between items-start mb-6">
@@ -196,7 +206,7 @@
           <div class="grid grid-cols-2 gap-2" id="incidentTypeGroup">
             <button type="button" data-type="SOS Request" class="type-btn border-2 border-gray-200 rounded-xl py-2.5 px-3 text-xs font-bold text-gray-600 hover:border-red-400 hover:bg-red-50 hover:text-red-600 transition text-center">
               🆘 SOS Request
-            </button>
+            </button> 
             <button type="button" data-type="Hazard" class="type-btn border-2 border-gray-200 rounded-xl py-2.5 px-3 text-xs font-bold text-gray-600 hover:border-yellow-400 hover:bg-yellow-50 hover:text-yellow-600 transition text-center">
               ⚠️ Hazard
             </button>
@@ -263,6 +273,12 @@
       orderBy,          
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import {
+      getStorage,
+      ref as storageRef,
+      uploadBytes,
+      getDownloadURL
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDCMWPvDEKEGWYiyL8ozobe778o1ZbudHY",
@@ -276,6 +292,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
     // --- 0. CUSTOM COLORED MARKERS ---
     // Helper function to create icons easily
@@ -500,6 +517,85 @@
       let clickedCoordinates = null; 
       let selectedIncidentType = null;
       let selectedIcon = blueIcon; // Default fallback
+      let selectedFiles = []; // Track attached files
+
+      // --- FILE UPLOAD HANDLING ---
+      const fileInput = document.getElementById('fileInput');
+      const dropZone = document.getElementById('dropZone');
+      const filePreviewList = document.getElementById('filePreviewList');
+
+      function renderFilePreviews() {
+          if (selectedFiles.length === 0) {
+              filePreviewList.classList.add('hidden');
+              filePreviewList.innerHTML = '';
+              return;
+          }
+          filePreviewList.classList.remove('hidden');
+          filePreviewList.innerHTML = '';
+          selectedFiles.forEach((file, index) => {
+              const chip = document.createElement('div');
+              chip.className = 'file-chip flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2';
+              
+              const isImage = file.type.startsWith('image/');
+              const isVideo = file.type.startsWith('video/');
+              let previewHtml = '';
+
+              if (isImage) {
+                  const url = URL.createObjectURL(file);
+                  previewHtml = `<img src="${url}" class="w-10 h-10 object-cover rounded" alt="preview">`;
+              } else if (isVideo) {
+                  previewHtml = `<div class="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path></svg>
+                  </div>`;
+              } else {
+                  previewHtml = `<div class="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-gray-500">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                  </div>`;
+              }
+
+              chip.innerHTML = `
+                  ${previewHtml}
+                  <div class="flex-1 min-w-0">
+                      <p class="text-xs font-medium text-gray-700 truncate">${file.name}</p>
+                      <p class="text-xs text-gray-400">${(file.size / 1024).toFixed(1)} KB</p>
+                  </div>
+                  <button data-index="${index}" class="remove-file ml-auto text-gray-400 hover:text-red-500 transition">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  </button>
+              `;
+              filePreviewList.appendChild(chip);
+          });
+
+          // Remove file buttons
+          filePreviewList.querySelectorAll('.remove-file').forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                  const idx = parseInt(e.currentTarget.getAttribute('data-index'));
+                  selectedFiles.splice(idx, 1);
+                  renderFilePreviews();
+              });
+          });
+      }
+
+      fileInput.addEventListener('change', () => {
+          const newFiles = Array.from(fileInput.files);
+          selectedFiles = [...selectedFiles, ...newFiles];
+          fileInput.value = ''; // Reset so same file can be re-added if needed
+          renderFilePreviews();
+      });
+
+      // Drag & Drop
+      dropZone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropZone.classList.add('drag-over');
+      });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+      dropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('drag-over');
+          const droppedFiles = Array.from(e.dataTransfer.files);
+          selectedFiles = [...selectedFiles, ...droppedFiles];
+          renderFilePreviews();
+      });
 
       // Handle Incident Type Selection Styles
       const typeBtns = document.querySelectorAll('.type-btn');
@@ -508,8 +604,7 @@
               // 1. Reset all buttons to default grey state
               typeBtns.forEach(b => {
                   b.classList.remove('border-red-400', 'bg-red-50', 'text-red-600',
-                                     'border-yellow-400', 'bg-yellow-50', 'text-yellow-600',
-                                     'border-blue-400', 'bg-blue-50', 'text-blue-600');
+                                     'border-yellow-400', 'bg-yellow-50', 'text-yellow-600');
                   b.classList.add('border-gray-200', 'text-gray-600');
               });
 
@@ -527,7 +622,7 @@
               } else if (type === 'Hazard') {
                   btn.classList.add('border-yellow-400', 'bg-yellow-50', 'text-yellow-600');
                   selectedIcon = yellowIcon;
-              }
+              } 
           });
       });
 
@@ -559,35 +654,66 @@
       });
 
       // User submits the form inside the Modal
-      pinToMapBtn.addEventListener('click', async () => {
+      // Find this block in your script (inside DOMContentLoaded) and replace it
+        pinToMapBtn.addEventListener('click', async () => {
             const titleValue = reportTitle.value.trim();
             if (!selectedIncidentType || !titleValue || !clickedCoordinates) {
-                alert("Please select a type, title, and location on the map.");
+                alert("Please select a type, enter a title, and click on the map to set location.");
                 return;
             }
 
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            // --- FILE VALIDATION ---
+            const MAX_SIZE_MB = 20;
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'application/pdf'];
+            for (const file of selectedFiles) {
+                if (!allowedTypes.includes(file.type) && !file.type.startsWith('image/')) {
+                    alert(`Unsupported file type: ${file.name}. Allowed: images, MP4, PDF.`);
+                    return;
+                }
+                if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+                    alert(`${file.name} exceeds ${MAX_SIZE_MB}MB limit.`);
+                    return;
+                }
+            }
+
+            // Disable button and show loading
+            const originalHtml = pinToMapBtn.innerHTML;
+            pinToMapBtn.disabled = true;
+            pinToMapBtn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">...</svg> Uploading...`;
+
             try {
-                // 1. Initialize auth inside this script
-                const auth = getAuth(); 
-                
-                // 2. Now you can safely grab the user
-                const user = auth.currentUser; 
-                
-                // 3. Add document to Firestore
+                const mediaUrls = [];
+                for (const file of selectedFiles) {
+                    const fileRef = storageRef(storage, `reports/${Date.now()}_${file.name}`);
+                    const snapshot = await uploadBytes(fileRef, file);
+                    const url = await getDownloadURL(snapshot.ref);
+                    mediaUrls.push({ url, type: file.type, name: file.name });
+                }
+
                 await addDoc(collection(db, "reports"), {
                     type: selectedIncidentType,
                     title: titleValue,
                     description: reportDesc.value.trim(),
                     lat: clickedCoordinates.lat,
                     lng: clickedCoordinates.lng,
-                    reportedBy: savedName,
-                    userId: user ? user.uid : "anonymous", // This will now work perfectly!
+                    reportedBy: user ? (user.displayName || user.email || "Anonymous") : "Anonymous",
+                    userId: user ? user.uid : "anonymous_user",
+                    mediaUrls: mediaUrls,
+                    status: "Reported",
                     timestamp: serverTimestamp()
                 });
-                
+
                 closeModal();
-            } catch(error) {
-                console.error("Error adding document: ", error);
+                alert("Report submitted successfully!");
+            } catch (error) {
+                console.error("Upload error:", error);
+                alert(`Upload failed: ${error.message}. Check storage rules or network.`);
+            } finally {
+                pinToMapBtn.disabled = false;
+                pinToMapBtn.innerHTML = originalHtml;
             }
         });
 
@@ -604,16 +730,40 @@
                     if (data.type === 'SOS Request') iconToUse = redIcon;
                     else if (data.type === 'Hazard') iconToUse = yellowIcon;
 
+                    // Build media HTML for popup
+                    let mediaHtml = '';
+                    if (data.mediaUrls && data.mediaUrls.length > 0) {
+                        mediaHtml = `<div class="mt-2 flex flex-wrap gap-1">`;
+                        data.mediaUrls.forEach(media => {
+                            if (media.type && media.type.startsWith('video/')) {
+                                mediaHtml += `
+                                    <video controls class="rounded" style="max-width:200px;max-height:130px;display:block;margin-top:4px;">
+                                        <source src="${media.url}" type="${media.type}">
+                                    </video>`;
+                            } else if (media.type && media.type.startsWith('image/')) {
+                                mediaHtml += `
+                                    <img src="${media.url}" alt="${media.name || 'photo'}"
+                                        style="max-width:200px;max-height:130px;object-fit:cover;border-radius:6px;cursor:pointer;display:block;margin-top:4px;"
+                                        onclick="openLightbox('${media.url}')" />`;
+                            } else {
+                                mediaHtml += `
+                                    <a href="${media.url}" target="_blank" class="text-xs text-blue-500 underline block mt-1">📄 ${media.name || 'Attachment'}</a>`;
+                            }
+                        });
+                        mediaHtml += `</div>`;
+                    }
+
                     L.marker([data.lat, data.lng], {icon: iconToUse})
                         .addTo(map)
                         .bindPopup(`
-                            <div class="p-1">
-                                <b class="text-brand-dark">${data.type}: ${data.title}</b><br>
-                                <p class="text-sm text-gray-600">${data.description || ''}</p>
-                                <hr class="my-1">
-                                <i class="text-xs text-gray-400 font-sans">By ${data.reportedBy}</i>
+                            <div style="min-width:180px;max-width:220px;font-family:sans-serif;">
+                                <b style="color:#3B5B47;font-size:13px;">${data.type}: ${data.title}</b>
+                                ${data.description ? `<p style="font-size:12px;color:#555;margin:4px 0;">${data.description}</p>` : ''}
+                                <hr style="margin:6px 0;border-color:#eee;">
+                                ${mediaHtml}
+                                <i style="font-size:11px;color:#aaa;display:block;margin-top:6px;">By ${data.reportedBy}</i>
                             </div>
-                        `);
+                        `, { maxWidth: 240 });
 
                     // 2. LIST UI LOGIC (The missing piece!)
                     // Grab the empty div where you want the reports to show up
@@ -642,15 +792,32 @@
 
       // Modal Closing Logic
       function closeModal() {
-            reportModal.classList.add('hidden');
-            startReportBtn.classList.remove('hidden');
-            reportTitle.value = '';
-            reportDesc.value = '';
-            selectedIncidentType = null;
-            typeBtns.forEach(b => b.classList.add('border-gray-200', 'text-gray-600'));
-        }
+          reportModal.classList.add('hidden');
+          startReportBtn.classList.remove('hidden');
+          reportTitle.value = '';
+          reportDesc.value = '';
+          selectedIncidentType = null;
+          selectedFiles = [];           // clear files
+          fileInput.value = '';         // reset file input
+          renderFilePreviews();         // refresh preview (empty)
+          typeBtns.forEach(b => b.classList.add('border-gray-200', 'text-gray-600'));
+          clickedCoordinates = null;    // also reset location
+      }
 
         window.closeModal = closeModal; // Make accessible to HTML buttons
+
+        // Lightbox helpers (globally accessible from popup HTML)
+        window.openLightbox = function(src) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            lightboxImg.src = src;
+            lightbox.classList.remove('hidden');
+        };
+        window.closeLightbox = function() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.add('hidden');
+            document.getElementById('lightboxImg').src = '';
+        };
     });
 </script>
 
